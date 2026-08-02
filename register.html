@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>التسجيل كصاحب مهنة - مهنتي</title>
+  <meta name="description" content="سجل بياناتك كصاحب مهنة حرفية - مجاني بالكامل">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-icon">📝</div>
+      <div class="app-title">التسجيل كصاحب مهنة</div>
+      <div class="app-subtitle">سجل بياناتك مجاناً - لا رسوم ولا عمولات</div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+      <a href="search.html" class="nav-tab">🔍 البحث</a>
+      <a href="register.html" class="nav-tab active">📝 التسجيل</a>
+      <a href="index.html" class="nav-tab">🏠 الرئيسية</a>
+    </nav>
+
+    <!-- Content -->
+    <main class="content-area fade-in">
+      <div class="card">
+        <div class="card-title">📝 تسجيل جديد</div>
+
+        <div class="success-msg" id="successMsg">
+          ✅ تم إرسال رمز التحقق! تحقق من هاتفك
+        </div>
+
+        <!-- Step 1: Basic Info -->
+        <div id="regStep1">
+          <div class="form-group">
+            <label class="form-label">الاسم الكامل *</label>
+            <input type="text" class="form-input" placeholder="أدخل اسمك الثلاثي" id="regName" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">رقم الجوال *</label>
+            <input type="tel" class="form-input" placeholder="05XXXXXXXX" id="regPhone" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">المهنة *</label>
+            <select class="form-select" id="regJob" required>
+              <option value="">اختر المهنة</option>
+              <option value="بناء">🧱 بناء - طوب وقصارة</option>
+              <option value="نجار">🪵 نجار - أبواب ودواليب</option>
+              <option value="حداد">🔩 حداد - أبواب حديد</option>
+              <option value="لحام">🔥 لحام - حديد وستانلس</option>
+              <option value="سباك">🔧 سباك - مواسير وصرف</option>
+              <option value="كهربائي">⚡ كهربائي - تركيبات</option>
+              <option value="سائق">🚗 سائق - نقل خفيف/ثقيل</option>
+              <option value="صباغ">🎨 صباغ - دهانات وديكور</option>
+              <option value="بليط">🏠 بليط - سيراميك ورخام</option>
+              <option value="جبس">🏗️ جبس - ديكورات وأسقف</option>
+              <option value="ألمنيوم">🪟 ألمنيوم - شبابيك وأبواب</option>
+              <option value="تكييف">❄️ تكييف - تركيب وصيانة</option>
+              <option value="نجار خشب">🛋️ نجار خشب - أثاث</option>
+              <option value="ميكانيكي">🔧 ميكانيكي - سيارات</option>
+              <option value="حداد أبواب">🚪 حداد أبواب - درابزين</option>
+              <option value="عامل نظافة">🧹 عامل نظافة</option>
+              <option value="حدائق">🌳 حدائق - تنسيق</option>
+              <option value="عوازل">🏠 عوازل - مائية/حرارية</option>
+              <option value="مصاعد">🛗 مصاعد - تركيب وصيانة</option>
+              <option value="أخرى">📌 أخرى</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">وصف المهنة *</label>
+            <textarea class="form-textarea" placeholder="اكتب نبذة عن خبراتك وخدماتك..." id="regDesc" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">المدينة *</label>
+            <select class="form-select" id="regCity" required>
+              <option value="">اختر المدينة</option>
+              <option value="الرياض">الرياض</option>
+              <option value="جدة">جدة</option>
+              <option value="مكة">مكة المكرمة</option>
+              <option value="المدينة">المدينة المنورة</option>
+              <option value="الدمام">الدمام</option>
+              <option value="الخبر">الخبر</option>
+              <option value="أبها">أبها</option>
+              <option value="تبوك">تبوك</option>
+              <option value="بريدة">بريدة</option>
+              <option value="الطائف">الطائف</option>
+              <option value="حائل">حائل</option>
+              <option value="نجران">نجران</option>
+              <option value="جازان">جازان</option>
+              <option value="القصيم">القصيم</option>
+              <option value="الأحساء">الأحساء</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">الحي / المنطقة *</label>
+            <input type="text" class="form-input" placeholder="مثال: حي النسيم" id="regArea" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">سنوات الخبرة</label>
+            <select class="form-select" id="regExp">
+              <option value="أقل من سنة">أقل من سنة</option>
+              <option value="1-3 سنوات">1-3 سنوات</option>
+              <option value="3-5 سنوات">3-5 سنوات</option>
+              <option value="5-10 سنوات">5-10 سنوات</option>
+              <option value="أكثر من 10">أكثر من 10 سنوات</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" onclick="goToVerify()">
+            التالي: التحقق من الرقم 📱
+          </button>
+        </div>
+
+        <!-- Step 2: Verification -->
+        <div id="regStep2" style="display:none;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 48px; margin-bottom: 10px;">🔐</div>
+            <h3 style="color: var(--primary-green); margin-bottom: 8px;">التحقق من رقم الجوال</h3>
+            <p style="color: var(--text-gray); font-size: 14px;">تم إرسال رمز التحقق إلى <strong id="verifyPhoneNum"></strong></p>
+          </div>
+
+          <div class="verify-methods">
+            <div class="verify-method selected" onclick="selectVerify(this, 'whatsapp')">
+              <div class="icon">💬</div>
+              <div class="label">واتساب</div>
+            </div>
+            <div class="verify-method" onclick="selectVerify(this, 'sms')">
+              <div class="icon">📩</div>
+              <div class="label">رسالة SMS</div>
+            </div>
+          </div>
+
+          <div class="otp-container">
+            <input type="text" class="otp-input" maxlength="1" oninput="moveOtp(this, 0)">
+            <input type="text" class="otp-input" maxlength="1" oninput="moveOtp(this, 1)">
+            <input type="text" class="otp-input" maxlength="1" oninput="moveOtp(this, 2)">
+            <input type="text" class="otp-input" maxlength="1" oninput="moveOtp(this, 3)">
+          </div>
+
+          <button class="btn btn-primary" onclick="verifyOtp()">
+            ✅ تأكيد التسجيل
+          </button>
+
+          <button class="btn btn-outline" onclick="resendCode()">
+            🔄 إعادة إرسال الرمز
+          </button>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="regStep3" style="display:none; text-align: center; padding: 30px 0;">
+          <div style="font-size: 64px; margin-bottom: 16px;">🎉</div>
+          <h2 style="color: var(--primary-green); margin-bottom: 12px;">تم التسجيل بنجاح!</h2>
+          <p style="color: var(--text-gray); margin-bottom: 24px; line-height: 1.8;">
+            أهلاً بك في مهنتي!<br>
+            بياناتك الآن متاحة للباحثين عن خدماتك
+          </p>
+          <a href="search.html" class="btn btn-primary">
+            🔍 تصفح العمال
+          </a>
+        </div>
+      </div>
+
+      <div style="text-align: center; padding: 10px;">
+        <span class="free-badge">🎁 التسجيل مجاني بالكامل - لا رسوم ولا عمولات</span>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span class="free-badge">💚 مهنتي - مجاني للجميع</span>
+      <p>تواصل مباشر بين أصحاب المهن والباحثين عنهم</p>
+      <p style="margin-top: 8px; opacity: 0.7;">© 2026 مهنتي - جميع الحقوق محفوظة</p>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
