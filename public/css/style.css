@@ -1,6 +1,6 @@
 /* ============================================
-   MAHANTI APP - Professional Trades Directory
-   Colors: Green (Hashishi) + Yellow + Eye-friendly
+   MAHANTI V2 - Global Trades Directory
+   Multi-language | Multi-country | Multi-verify
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
@@ -32,6 +32,8 @@ body {
   line-height: 1.6;
 }
 
+body[dir="ltr"] { direction: ltr; }
+
 .app-container {
   max-width: 480px;
   margin: 0 auto;
@@ -42,10 +44,43 @@ body {
   box-shadow: var(--shadow);
 }
 
+/* ========== LANGUAGE SWITCHER ========== */
+.lang-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-cream);
+  border-bottom: 1px solid #E8F5E9;
+}
+
+.lang-btn {
+  padding: 8px 16px;
+  border: 2px solid var(--light-green);
+  border-radius: 20px;
+  background: var(--white);
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.lang-btn.active {
+  background: var(--primary-green);
+  color: var(--white);
+  border-color: var(--primary-green);
+}
+
+.lang-btn:hover:not(.active) {
+  background: var(--light-green);
+  color: var(--white);
+}
+
 /* ========== HEADER ========== */
 .app-header {
   background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
-  padding: 24px 20px 40px;
+  padding: 20px 20px 40px;
   text-align: center;
   color: var(--white);
   position: relative;
@@ -62,9 +97,9 @@ body {
   border-radius: 50% 50% 0 0;
 }
 
-.logo-icon { font-size: 52px; margin-bottom: 8px; }
-.app-title { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
-.app-subtitle { font-size: 14px; opacity: 0.9; }
+.logo-icon { font-size: 48px; margin-bottom: 6px; }
+.app-title { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+.app-subtitle { font-size: 13px; opacity: 0.9; padding: 0 20px; }
 
 /* ========== NAVIGATION ========== */
 .nav-tabs {
@@ -79,11 +114,11 @@ body {
 
 .nav-tab {
   flex: 1;
-  padding: 12px 6px;
+  padding: 12px 4px;
   border: none;
   border-radius: 12px;
   font-family: 'Cairo', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -105,7 +140,7 @@ body {
 }
 
 /* ========== CONTENT ========== */
-.content-area { padding: 20px; min-height: calc(100vh - 220px); }
+.content-area { padding: 20px; min-height: calc(100vh - 260px); }
 
 /* ========== CARDS ========== */
 .card {
@@ -118,7 +153,7 @@ body {
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--primary-green);
   margin-bottom: 16px;
@@ -157,6 +192,35 @@ body {
 
 .form-textarea { min-height: 80px; resize: vertical; }
 
+/* ========== PHONE INPUT GROUP ========== */
+.phone-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.country-code {
+  background: var(--bg-cream);
+  border: 2px solid var(--light-green);
+  border-radius: 12px;
+  padding: 14px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-green);
+  white-space: nowrap;
+  min-width: 70px;
+  text-align: center;
+}
+
+.phone-field { flex: 1; }
+
+.phone-hint {
+  display: block;
+  font-size: 12px;
+  color: var(--text-gray);
+  margin-top: 6px;
+}
+
 /* ========== BUTTONS ========== */
 .btn {
   width: 100%;
@@ -164,7 +228,7 @@ body {
   border: none;
   border-radius: 14px;
   font-family: 'Cairo', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -221,7 +285,7 @@ body {
 }
 
 /* ========== SEARCH ========== */
-.search-box { position: relative; margin-bottom: 20px; }
+.search-box { position: relative; margin-bottom: 16px; }
 
 .search-input {
   width: 100%;
@@ -233,6 +297,10 @@ body {
   background: var(--white);
 }
 
+body[dir="ltr"] .search-input {
+  padding: 16px 16px 16px 50px;
+}
+
 .search-icon {
   position: absolute;
   right: 16px;
@@ -240,6 +308,11 @@ body {
   transform: translateY(-50%);
   font-size: 20px;
   color: var(--primary-green);
+}
+
+body[dir="ltr"] .search-icon {
+  right: auto;
+  left: 16px;
 }
 
 /* ========== WORKER CARDS ========== */
@@ -253,9 +326,18 @@ body {
   transition: all 0.3s ease;
 }
 
+body[dir="ltr"] .worker-card {
+  border-right: none;
+  border-left: 4px solid var(--primary-green);
+}
+
 .worker-card:hover {
   transform: translateX(-4px);
   box-shadow: 0 4px 16px rgba(46, 125, 50, 0.15);
+}
+
+body[dir="ltr"] .worker-card:hover {
+  transform: translateX(4px);
 }
 
 .worker-header {
@@ -263,21 +345,31 @@ body {
   justify-content: space-between;
   align-items: start;
   margin-bottom: 10px;
+  gap: 8px;
 }
 
-.worker-name { font-size: 17px; font-weight: 700; color: var(--text-dark); }
+.worker-name { font-size: 16px; font-weight: 700; color: var(--text-dark); flex: 1; }
 
 .worker-job {
   background: var(--accent-yellow);
   color: var(--text-dark);
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.worker-country {
+  font-size: 11px;
+  background: var(--bg-cream);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
 }
 
 .worker-info {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-gray);
   line-height: 1.8;
 }
@@ -309,11 +401,11 @@ body {
   background: var(--bg-cream);
   border: 2px solid transparent;
   border-radius: 12px;
-  padding: 14px 8px;
+  padding: 14px 6px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   color: var(--text-dark);
@@ -326,7 +418,37 @@ body {
   transform: scale(1.05);
 }
 
-.job-chip .emoji { display: block; font-size: 24px; margin-bottom: 4px; }
+.job-chip .emoji { display: block; font-size: 22px; margin-bottom: 4px; }
+
+/* ========== COUNTRIES GRID ========== */
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.country-chip {
+  background: var(--bg-cream);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-dark);
+}
+
+.country-chip:hover, .country-chip.active {
+  background: var(--primary-green);
+  color: var(--white);
+  border-color: var(--accent-yellow);
+  transform: scale(1.05);
+}
+
+.country-chip .flag { display: block; font-size: 24px; margin-bottom: 4px; }
 
 /* ========== OTP ========== */
 .otp-container {
@@ -356,21 +478,21 @@ body {
 /* ========== STATS ========== */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   margin-bottom: 20px;
 }
 
 .stat-box {
   background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
   color: var(--white);
-  padding: 16px 8px;
+  padding: 14px 4px;
   border-radius: 14px;
   text-align: center;
 }
 
-.stat-number { font-size: 24px; font-weight: 800; color: var(--accent-yellow); }
-.stat-label { font-size: 12px; margin-top: 4px; }
+.stat-number { font-size: 20px; font-weight: 800; color: var(--accent-yellow); }
+.stat-label { font-size: 11px; margin-top: 4px; }
 
 /* ========== FILTER TAGS ========== */
 .filter-tags {
@@ -400,13 +522,13 @@ body {
 /* ========== VERIFY METHODS ========== */
 .verify-methods {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin: 16px 0;
 }
 
 .verify-method {
   flex: 1;
-  padding: 16px;
+  padding: 14px 4px;
   border: 2px solid #E0E0E0;
   border-radius: 14px;
   text-align: center;
@@ -420,8 +542,8 @@ body {
   background: #E8F5E9;
 }
 
-.verify-method .icon { font-size: 32px; margin-bottom: 8px; }
-.verify-method .label { font-size: 14px; font-weight: 700; }
+.verify-method .icon { font-size: 28px; margin-bottom: 6px; }
+.verify-method .label { font-size: 12px; font-weight: 700; }
 
 /* ========== SUCCESS MESSAGE ========== */
 .success-msg {
@@ -470,8 +592,10 @@ body {
 @media (max-width: 480px) {
   .app-container { max-width: 100%; }
   .job-grid { grid-template-columns: repeat(2, 1fr); }
-  .stats-row { gap: 6px; }
-  .stat-number { font-size: 20px; }
+  .countries-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .stat-number { font-size: 18px; }
+  .verify-methods { flex-direction: column; }
 }
 
 /* ========== SCROLLBAR ========== */
