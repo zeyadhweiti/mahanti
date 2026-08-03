@@ -1,15 +1,194 @@
 /* ============================================
-   MAHANTI V2 - Global Trades Directory
+   MAHANTI V2 - STANDALONE VERSION
+   Works on ANY hosting (GitHub Pages, Netlify, etc.)
+   All data embedded - no backend required!
    ============================================ */
 
-const API_URL = window.location.origin;
+// ========== EMBEDDED COUNTRIES DATA (35+ countries) ==========
+const COUNTRIES_DATA = {
+  sa: { code: "+966", flag: "🇸🇦", nameAr: "السعودية", nameEn: "Saudi Arabia", phoneLength: 9, phoneExample: "50 123 4567", cities: ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "بريدة", "الطائف", "حائل", "نجران", "جازان", "القصيم", "الأحساء", "خميس مشيط", "الجبيل", "ينبع", "عرعر", "القريات", "الباحة", "سكاكا", "الظهران"] },
+  eg: { code: "+20", flag: "🇪🇬", nameAr: "مصر", nameEn: "Egypt", phoneLength: 10, phoneExample: "10 1234 5678", cities: ["القاهرة", "الإسكندرية", "الجيزة", "شبرا الخيمة", "بورسعيد", "السويس", "الأقصر", "أسوان", "المنصورة", "طنطا", "المحلة الكبرى", "دمياط", "الزقازيق", "أسيوط", "الفيوم", "بني سويف", "قنا", "سوهاج", "الإسماعيلية", "الغردقة", "شرم الشيخ", "العريش", "مرسى مطروح", "سيوة", "المنيا", "كفر الشيخ", "دمنهور"] },
+  jo: { code: "+962", flag: "🇯🇴", nameAr: "الأردن", nameEn: "Jordan", phoneLength: 9, phoneExample: "7 9012 3456", cities: ["عمان", "إربد", "الزرقاء", "السلط", "الرصيفة", "مأدبا", "جرش", "عجلون", "الكرك", "معان", "الطفيلة", "مادبا", "البتراء", "العقبة", "وادي رم", "الرمثا", "سحاب"] },
+  ae: { code: "+971", flag: "🇦🇪", nameAr: "الإمارات", nameEn: "UAE", phoneLength: 9, phoneExample: "50 123 4567", cities: ["دبي", "أبوظبي", "الشارقة", "عجمان", "رأس الخيمة", "الفجيرة", "أم القيوين", "العين", "خورفكان", "ذياب"] },
+  qa: { code: "+974", flag: "🇶🇦", nameAr: "قطر", nameEn: "Qatar", phoneLength: 8, phoneExample: "33 123 456", cities: ["الدوحة", "الريان", "الخور", "الوكرة", "أم صلال", "الشمال", "الشحانية", "مسيعيد", "لوسيل", "الخور"] },
+  kw: { code: "+965", flag: "🇰🇼", nameAr: "الكويت", nameEn: "Kuwait", phoneLength: 8, phoneExample: "5 123 4567", cities: ["الكويت العاصمة", "حولي", "السالمية", "الفروانية", "الأحمدي", "الجهراء", "مبارك الكبير", "الفحيحيل", "المنقف", "العدان"] },
+  bh: { code: "+973", flag: "🇧🇭", nameAr: "البحرين", nameEn: "Bahrain", phoneLength: 8, phoneExample: "3 123 4567", cities: ["المنامة", "المحرق", "الرفاع", "مدينة حمد", "عيسى town", "سترة", "جد حفص", "البديع", "الحد", "الدراز"] },
+  om: { code: "+968", flag: "🇴🇲", nameAr: "عمان", nameEn: "Oman", phoneLength: 8, phoneExample: "9 123 4567", cities: ["مسقط", "صلالة", "صحار", "نزوى", "صور", "الرستاق", "عبري", "إبراء", "خصب", "بركاء", "السيب", "بوشر"] },
+  iq: { code: "+964", flag: "🇮🇶", nameAr: "العراق", nameEn: "Iraq", phoneLength: 10, phoneExample: "770 123 4567", cities: ["بغداد", "البصرة", "الموصل", "أربيل", "النجف", "كربلاء", "السليمانية", "كركوك", "الأنبار", "بابل", "ديالى", "صلاح الدين", "نينوى", "دهوك", "واسط", "ميسان"] },
+  sy: { code: "+963", flag: "🇸🇾", nameAr: "سوريا", nameEn: "Syria", phoneLength: 9, phoneExample: "930 123 456", cities: ["دمشق", "حلب", "حمص", "اللاذقية", "حماة", "طرطوس", "دير الزور", "الرقة", "الحسكة", "إدلب", "درعا", "السويداء", "القنيطرة", "ريف دمشق"] },
+  lb: { code: "+961", flag: "🇱🇧", nameAr: "لبنان", nameEn: "Lebanon", phoneLength: 8, phoneExample: "3 123 456", cities: ["بيروت", "طرابلس", "صيدا", "صور", "جبيل", "زحلة", "بعلبك", "عاليه", "جونيه", "الشوف", "عكار", "النبطية"] },
+  ps: { code: "+970", flag: "🇵🇸", nameAr: "فلسطين", nameEn: "Palestine", phoneLength: 9, phoneExample: "59 123 4567", cities: ["القدس", "غزة", "رام الله", "نابلس", "الخليل", "بيت لحم", "جنين", "أريحا", "طولكرم", "قلقيلية", "رفح", "خان يونس"] },
+  ye: { code: "+967", flag: "🇾🇪", nameAr: "اليمن", nameEn: "Yemen", phoneLength: 9, phoneExample: "7 123 456 78", cities: ["صنعاء", "عدن", "تعز", "الحديدة", "المكلا", "إب", "ذمار", "البيضاء", "سيئون", "المهرة", "حضرموت", "أبين"] },
+  sd: { code: "+249", flag: "🇸🇩", nameAr: "السودان", nameEn: "Sudan", phoneLength: 9, phoneExample: "90 123 4567", cities: ["الخرطوم", "أم درمان", "بورتسودان", "كسلا", "الأبيض", "نيالا", "الفاشر", "القضارف", "مروي", "عطبرة", "سنار"] },
+  ly: { code: "+218", flag: "🇱🇾", nameAr: "ليبيا", nameEn: "Libya", phoneLength: 9, phoneExample: "91 123 4567", cities: ["طرابلس", "بنغازي", "مصراتة", "الزاوية", "البيضاء", "سبها", "درنة", "طبرق", "سرت", "الخمس", "زليتن"] },
+  dz: { code: "+213", flag: "🇩🇿", nameAr: "الجزائر", nameEn: "Algeria", phoneLength: 9, phoneExample: "5 12 34 56 78", cities: ["الجزائر العاصمة", "وهران", "قسنطينة", "عنابة", "باتنة", "سطيف", "البليدة", "تيارت", "بسكرة", "تلمسان", "سعيدة"] },
+  ma: { code: "+212", flag: "🇲🇦", nameAr: "المغرب", nameEn: "Morocco", phoneLength: 9, phoneExample: "6 12 34 56 78", cities: ["الرباط", "الدار البيضاء", "مراكش", "فاس", "طنجة", "أكادير", "مكناس", "وجدة", "القنيطرة", "تطوان", "خريبكة"] },
+  tn: { code: "+216", flag: "🇹🇳", nameAr: "تونس", nameEn: "Tunisia", phoneLength: 8, phoneExample: "2 123 4567", cities: ["تونس العاصمة", "صفاقس", "سوسة", "القيروان", "بنزرت", "قابس", "نابل", "المهدية", "المنستير", "قفصة", "توزر"] },
+  tr: { code: "+90", flag: "🇹🇷", nameAr: "تركيا", nameEn: "Turkey", phoneLength: 10, phoneExample: "532 123 4567", cities: ["إسطنبول", "أنقرة", "إزمير", "بورصة", "أنطاليا", "أضنة", "قونيا", "غازي عنتاب", "مرسين", "ديار بكر"] },
+  pk: { code: "+92", flag: "🇵🇰", nameAr: "باكستان", nameEn: "Pakistan", phoneLength: 10, phoneExample: "300 1234567", cities: ["كراتشي", "لاهور", "إسلام أباد", "فيصل آباد", "روالبندي", "غوجرانوالا", "مولتان", "بيشاور", "كويتا", "سيالكوت"] },
+  in: { code: "+91", flag: "🇮🇳", nameAr: "الهند", nameEn: "India", phoneLength: 10, phoneExample: "98765 43210", cities: ["مومباي", "دلهي", "بنغالور", "حيدر أباد", "تشيناي", "كولكاتا", "بيون", "أحمد آباد", "جايبور", "سورات"] },
+  id: { code: "+62", flag: "🇮🇩", nameAr: "إندونيسيا", nameEn: "Indonesia", phoneLength: 10, phoneExample: "812 3456 7890", cities: ["جاكرتا", "سورابايا", "باندونغ", "ميدان", "سيمارانغ", "ماكاسار", "بالي", "يوجياكارتا", "باتام", "بالمبانج"] },
+  bd: { code: "+880", flag: "🇧🇩", nameAr: "بنغلاديش", nameEn: "Bangladesh", phoneLength: 10, phoneExample: "1712 345678", cities: ["داكا", "تشيتاغونغ", "خولنا", "راجشاهي", "سيلهيت", "باريسال", "رانجبور", "ميمينسينغ", "كوميلا"] },
+  ng: { code: "+234", flag: "🇳🇬", nameAr: "نيجيريا", nameEn: "Nigeria", phoneLength: 10, phoneExample: "803 123 4567", cities: ["لاغوس", "أبوجا", "كانو", "إبادان", "بورت هاركورت", "بنين", "كادونا", "أونيتشا", "ميدوجوري", "إنوغو"] },
+  us: { code: "+1", flag: "🇺🇸", nameAr: "الولايات المتحدة", nameEn: "USA", phoneLength: 10, phoneExample: "(555) 123-4567", cities: ["نيويورك", "لوس أنجلوس", "شيكاغو", "هيوستن", "فينيكس", "فيلادلفيا", "سان أنطونيو", "سان دييغو", "دالاس", "سان خوسيه"] },
+  gb: { code: "+44", flag: "🇬🇧", nameAr: "المملكة المتحدة", nameEn: "UK", phoneLength: 10, phoneExample: "7700 900123", cities: ["لندن", "مانشستر", "برمنغهام", "ليدز", "غلاسكو", "شفيلد", "برادفورد", "ليفربول", "إدنبرة", "بريستول"] },
+  de: { code: "+49", flag: "🇩🇪", nameAr: "ألمانيا", nameEn: "Germany", phoneLength: 10, phoneExample: "1512 3456789", cities: ["برلين", "ميونخ", "هامبورغ", "كولونيا", "فرانكفورت", "شتوتغارت", "دوسلدورف", "لايبزيغ", "دورتموند", "سنغافورة"] },
+  fr: { code: "+33", flag: "🇫🇷", nameAr: "فرنسا", nameEn: "France", phoneLength: 9, phoneExample: "6 12 34 56 78", cities: ["باريس", "مرسيليا", "ليون", "تولوز", "نيس", "نانت", "ستراسبورغ", "مونبلييه", "بوردو", "ليل"] },
+  it: { code: "+39", flag: "🇮🇹", nameAr: "إيطاليا", nameEn: "Italy", phoneLength: 10, phoneExample: "312 345 6789", cities: ["روما", "ميلانو", "نابولي", "تورينو", "باليرمو", "جنوة", "بولونيا", "فلورنسا", "باري", "كاتانيا"] },
+  es: { code: "+34", flag: "🇪🇸", nameAr: "إسبانيا", nameEn: "Spain", phoneLength: 9, phoneExample: "612 345 678", cities: ["مدريد", "برشلونة", "فالنسيا", "إشبيلية", "سرقسطة", "مالقة", "مورسيا", "بلباو", "فالادوليد", "قرطبة"] },
+  br: { code: "+55", flag: "🇧🇷", nameAr: "البرازيل", nameEn: "Brazil", phoneLength: 11, phoneExample: "(11) 91234-5678", cities: ["ساو باولو", "ريو دي جانيرو", "برازيليا", "سلفادور", "فورتاليزا", "بيلو هوريزونتي", "ماناوس", "كوريتيبا", "ريسيفي", "بورتو أليغري"] },
+  cn: { code: "+86", flag: "🇨🇳", nameAr: "الصين", nameEn: "China", phoneLength: 11, phoneExample: "138 1234 5678", cities: ["بكين", "شنغهاي", "شنتشن", "قوانغتشو", "تيانجين", "تشونغتشينغ", "هونغ كونغ", "تشينغداو", "داليان", "نانجينغ"] },
+  jp: { code: "+81", flag: "🇯🇵", nameAr: "اليابان", nameEn: "Japan", phoneLength: 10, phoneExample: "90-1234-5678", cities: ["طوكيو", "أوساكا", "ييوكوهاما", "ناغويا", "سابورو", "فوكوكا", "كوبه", "كاواساكي", "كيوتو", "سايتاما"] },
+  ru: { code: "+7", flag: "🇷🇺", nameAr: "روسيا", nameEn: "Russia", phoneLength: 10, phoneExample: "912 345-67-89", cities: ["موسكو", "سانت بطرسبرغ", "نوفوسيبيرسك", "يكاترينبورغ", "نيجني نوفغورود", "كازان", "تشيليابينسك", "أومسك", "سمارا", "روستوف"] },
+  za: { code: "+27", flag: "🇿🇦", nameAr: "جنوب أفريقيا", nameEn: "South Africa", phoneLength: 9, phoneExample: "71 123 4567", cities: ["كيب تاون", "جوهانسبرغ", "ديربان", "بريتوريا", "بورت إليزابيث", "بلومفونتين", "إيست لندن", "بولوكوان", "نيلسبرويت"] },
+  au: { code: "+61", flag: "🇦🇺", nameAr: "أستراليا", nameEn: "Australia", phoneLength: 9, phoneExample: "412 345 678", cities: ["سيدني", "ملبورن", "بريسبان", "برث", "أديلايد", "غولد كوست", "كانبيرا", "نيوكاسل", "وولونغونغ"] },
+  ca: { code: "+1", flag: "🇨🇦", nameAr: "كندا", nameEn: "Canada", phoneLength: 10, phoneExample: "(416) 123-4567", cities: ["تورنتو", "مونتريال", "فانكوفر", "كالجاري", "أوتاوا", "إدمونتون", "كيبيك", "وينيبيغ", "هاميلتون", "كيتشنر"] }
+};
+
+// ========== EMBEDDED TRANSLATIONS ==========
+const I18N_DATA = {
+  ar: {
+    appName: "مهنتي", appSubtitle: "تواصل مع أصحاب المهن الحرفية - مجاني بالكامل",
+    home: "🏠 الرئيسية", search: "🔍 البحث", register: "📝 التسجيل",
+    workersCount: "عامل مسجل", jobsCount: "مهنة متاحة", citiesCount: "مدينة", countriesCount: "بلد",
+    howItWorks: "🎯 كيف يعمل التطبيق؟",
+    step1: "1️⃣ إذا كنت صاحب مهنة → سجل بياناتك مجاناً",
+    step2: "2️⃣ إذا كنت باحث عن خدمة → ابحث بالمهنة والمدينة",
+    step3: "3️⃣ تواصل مباشرة عبر الواتساب",
+    step4: "4️⃣ بدون رسوم ولا عمولات نهائياً",
+    topJobs: "⭐ المهن الأكثر طلباً", allJobs: "📋 جميع المهن المتاحة",
+    registerNow: "🚀 سجل الآن كصاحب مهنة",
+    searchWorkers: "البحث عن العمال", searchPlaceholder: "ابحث باسم المهنة أو العامل...",
+    allCities: "📍 جميع المدن", allCountries: "🌍 جميع البلدان",
+    noResults: "لا توجد نتائج", noResultsDesc: "جرب البحث بكلمات مختلفة أو تصفية أقل",
+    workerCard: { location: "📍", experience: "⭐", description: "📝" },
+    whatsapp: "واتساب", call: "اتصال",
+    registerTitle: "التسجيل كصاحب مهنة", registerSubtitle: "سجل بياناتك مجاناً - لا رسوم ولا عمولات",
+    fullName: "الاسم الكامل *", fullNamePlaceholder: "أدخل اسمك الثلاثي",
+    country: "البلد *", selectCountry: "اختر البلد",
+    phone: "رقم الجوال *", phonePlaceholder: "رقم الهاتف بدون كود البلد",
+    job: "المهنة *", selectJob: "اختر المهنة",
+    jobDesc: "وصف المهنة *", jobDescPlaceholder: "اكتب نبذة عن خبراتك وخدماتك...",
+    city: "المدينة *", selectCity: "اختر المدينة",
+    area: "الحي / المنطقة *", areaPlaceholder: "مثال: حي النسيم",
+    experience: "سنوات الخبرة",
+    lessThanYear: "أقل من سنة", years1_3: "1-3 سنوات", years3_5: "3-5 سنوات", years5_10: "5-10 سنوات", years10plus: "أكثر من 10 سنوات",
+    verifyTitle: "التحقق من رقم الجوال", verifySent: "تم إرسال رمز التحقق إلى",
+    viaWhatsapp: "واتساب", viaSMS: "رسالة SMS", viaEmail: "البريد الإلكتروني",
+    confirmRegister: "✅ تأكيد التسجيل", resendCode: "🔄 إعادة إرسال الرمز",
+    registerSuccess: "تم التسجيل بنجاح!",
+    registerSuccessDesc: "أهلاً بك في مهنتي! بياناتك الآن متاحة للباحثين عن خدماتك",
+    browseWorkers: "🔍 تصفح العمال",
+    freeBadge: "🎁 التسجيل مجاني بالكامل - لا رسوم ولا عمولات",
+    footer: "تواصل مباشر بين أصحاب المهن والباحثين عنهم", footerRights: "جميع الحقوق محفوظة",
+    chooseVerifyMethod: "اختر طريقة التوثيق *", email: "البريد الإلكتروني", emailPlaceholder: "example@email.com",
+    verifyMethod: "طريقة التوثيق", nextVerify: "التالي: التحقق من الرقم 📱",
+    validation: {
+      nameRequired: "يرجى إدخال الاسم الكامل", countryRequired: "يرجى اختيار البلد",
+      phoneRequired: "يرجى إدخال رقم الجوال", phoneInvalid: "رقم الجوال غير صحيح لهذا البلد",
+      jobRequired: "يرجى اختيار المهنة", cityRequired: "يرجى اختيار المدينة",
+      areaRequired: "يرجى إدخال الحي / المنطقة", emailRequired: "يرجى إدخال البريد الإلكتروني",
+      emailInvalid: "البريد الإلكتروني غير صحيح", otpRequired: "يرجى إدخال رمز التحقق كاملاً",
+      otpInvalid: "رمز التحقق غير صحيح", otpExpired: "انتهت صلاحية رمز التحقق"
+    },
+    jobs: {
+      builder: "🧱 بناء - طوب وقصارة", carpenter: "🪵 نجار - أبواب ودواليب",
+      blacksmith: "🔩 حداد - أبواب حديد", welder: "🔥 لحام - حديد وستانلس",
+      plumber: "🔧 سباك - مواسير وصرف", electrician: "⚡ كهربائي - تركيبات",
+      driver: "🚗 سائق - نقل خفيف/ثقيل", painter: "🎨 صباغ - دهانات وديكور",
+      tiler: "🏠 بليط - سيراميك ورخام", gypsum: "🏗️ جبس - ديكورات وأسقف",
+      aluminum: "🪟 ألمنيوم - شبابيك وأبواب", ac: "❄️ تكييف - تركيب وصيانة",
+      furnitureCarpenter: "🛋️ نجار أثاث", mechanic: "🔧 ميكانيكي - سيارات",
+      doorBlacksmith: "🚪 حداد أبواب - درابزين", cleaner: "🧹 عامل نظافة",
+      gardener: "🌳 حدائق - تنسيق", insulation: "🏠 عوازل - مائية/حرارية",
+      elevator: "🛗 مصاعد - تركيب وصيانة", other: "📌 أخرى"
+    }
+  },
+  en: {
+    appName: "Mahanti", appSubtitle: "Connect with skilled tradespeople - Completely Free",
+    home: "🏠 Home", search: "🔍 Search", register: "📝 Register",
+    workersCount: "Workers", jobsCount: "Trades", citiesCount: "Cities", countriesCount: "Countries",
+    howItWorks: "🎯 How It Works?",
+    step1: "1️⃣ If you're a tradesperson → Register for free",
+    step2: "2️⃣ If you need services → Search by trade & city",
+    step3: "3️⃣ Connect directly via WhatsApp",
+    step4: "4️⃣ No fees or commissions ever",
+    topJobs: "⭐ Most Requested", allJobs: "📋 All Trades",
+    registerNow: "🚀 Register Now",
+    searchWorkers: "Search Workers", searchPlaceholder: "Search by trade or name...",
+    allCities: "📍 All Cities", allCountries: "🌍 All Countries",
+    noResults: "No Results", noResultsDesc: "Try different keywords",
+    workerCard: { location: "📍", experience: "⭐", description: "📝" },
+    whatsapp: "WhatsApp", call: "Call",
+    registerTitle: "Register", registerSubtitle: "Free - No fees",
+    fullName: "Full Name *", fullNamePlaceholder: "Your full name",
+    country: "Country *", selectCountry: "Select Country",
+    phone: "Phone *", phonePlaceholder: "Without country code",
+    job: "Trade *", selectJob: "Select Trade",
+    jobDesc: "Description *", jobDescPlaceholder: "Describe your work...",
+    city: "City *", selectCity: "Select City",
+    area: "Area *", areaPlaceholder: "e.g. Downtown",
+    experience: "Experience",
+    lessThanYear: "< 1 year", years1_3: "1-3 years", years3_5: "3-5 years", years5_10: "5-10 years", years10plus: "10+ years",
+    verifyTitle: "Verify Phone", verifySent: "Code sent to",
+    viaWhatsapp: "WhatsApp", viaSMS: "SMS", viaEmail: "Email",
+    confirmRegister: "✅ Confirm", resendCode: "🔄 Resend",
+    registerSuccess: "Success!", registerSuccessDesc: "Welcome! Your profile is visible now",
+    browseWorkers: "🔍 Browse", freeBadge: "🎁 Free - No Fees",
+    footer: "Direct connection between workers and customers", footerRights: "All rights reserved",
+    chooseVerifyMethod: "Verification *", email: "Email", emailPlaceholder: "you@email.com",
+    verifyMethod: "Method", nextVerify: "Next: Verify 📱",
+    validation: {
+      nameRequired: "Name required", countryRequired: "Select country",
+      phoneRequired: "Phone required", phoneInvalid: "Invalid phone",
+      jobRequired: "Select trade", cityRequired: "Select city",
+      areaRequired: "Enter area", emailRequired: "Email required",
+      emailInvalid: "Invalid email", otpRequired: "Enter full code",
+      otpInvalid: "Invalid code", otpExpired: "Code expired"
+    },
+    jobs: {
+      builder: "🧱 Builder", carpenter: "🪵 Carpenter",
+      blacksmith: "🔩 Blacksmith", welder: "🔥 Welder",
+      plumber: "🔧 Plumber", electrician: "⚡ Electrician",
+      driver: "🚗 Driver", painter: "🎨 Painter",
+      tiler: "🏠 Tiler", gypsum: "🏗️ Gypsum",
+      aluminum: "🪟 Aluminum", ac: "❄️ AC Tech",
+      furnitureCarpenter: "🛋️ Furniture", mechanic: "🔧 Mechanic",
+      doorBlacksmith: "🚪 Door Smith", cleaner: "🧹 Cleaner",
+      gardener: "🌳 Gardener", insulation: "🏠 Insulation",
+      elevator: "🛗 Elevator", other: "📌 Other"
+    }
+  }
+};
+
+// ========== EMBEDDED WORKERS ==========
+let WORKERS_DATA = [
+  { id: "w1", name: "أحمد محمد العلي", phone: "966501234567", job: "بناء", jobEn: "Builder", desc: "بناء طوب وقصارة وتشطيب", descEn: "Brick, plaster & finishing", country: "sa", city: "الرياض", area: "حي النسيم", exp: "5 سنوات خبرة", expEn: "5 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w2", name: "خالد عبدالرحمن", phone: "966509876543", job: "نجار", jobEn: "Carpenter", desc: "نجارة أبواب وشبابيك", descEn: "Doors & windows", country: "sa", city: "جدة", area: "حي الصفا", exp: "12 سنة خبرة", expEn: "12 years", verified: true, verifyMethod: "sms" },
+  { id: "w3", name: "سلطان المطيري", phone: "966503456789", job: "حداد", jobEn: "Blacksmith", desc: "حدادة أبواب حديد", descEn: "Iron doors", country: "sa", city: "الدمام", area: "حي الفيصلية", exp: "8 سنوات خبرة", expEn: "8 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w4", name: "فهد السبيعي", phone: "966508901234", job: "سائق", jobEn: "Driver", desc: "سائق نقل خفيف وثقيل", descEn: "Transport driver", country: "sa", city: "مكة", area: "حي الزاهر", exp: "10 سنوات خبرة", expEn: "10 years", verified: true, verifyMethod: "email" },
+  { id: "w5", name: "محمد أحمد حسن", phone: "201012345678", job: "كهربائي", jobEn: "Electrician", desc: "كهرباء منازل", descEn: "Home electricity", country: "eg", city: "القاهرة", area: "مدينة نصر", exp: "7 سنوات خبرة", expEn: "7 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w6", name: "عبدالله محمود", phone: "201198765432", job: "سباك", jobEn: "Plumber", desc: "سباكة مواسير", descEn: "Pipes & drainage", country: "eg", city: "الإسكندرية", area: "سموحة", exp: "9 سنوات خبرة", expEn: "9 years", verified: true, verifyMethod: "sms" },
+  { id: "w7", name: "عمر خالد", phone: "201155443322", job: "صباغ", jobEn: "Painter", desc: "دهانات داخلية وخارجية", descEn: "Interior & exterior paint", country: "eg", city: "الجيزة", area: "الدقي", exp: "4 سنوات خبرة", expEn: "4 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w8", name: "أحمد سلامة", phone: "962790123456", job: "بليط", jobEn: "Tiler", desc: "تركيب سيراميك ورخام", descEn: "Ceramic & marble", country: "jo", city: "عمان", area: "جبل عمان", exp: "11 سنة خبرة", expEn: "11 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w9", name: "خالد النعيمي", phone: "962779876543", job: "لحام", jobEn: "Welder", desc: "لحام حديد وستانلس", descEn: "Iron & stainless welding", country: "jo", city: "إربد", area: "الحي الشرقي", exp: "6 سنوات خبرة", expEn: "6 years", verified: true, verifyMethod: "sms" },
+  { id: "w10", name: "Ali Hassan", phone: "971501234567", job: "تكييف", jobEn: "AC Tech", desc: "تركيب وصيانة مكيفات", descEn: "AC install & repair", country: "ae", city: "دبي", area: "بر دبي", exp: "8 سنوات خبرة", expEn: "8 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w11", name: "Rashid Al-Mansouri", phone: "971559876543", job: "ميكانيكي", jobEn: "Mechanic", desc: "صيانة سيارات", descEn: "Car maintenance", country: "ae", city: "أبوظبي", area: "المركزية", exp: "15 سنة خبرة", expEn: "15 years", verified: true, verifyMethod: "email" },
+  { id: "w12", name: "محمد العطية", phone: "97433123456", job: "جبس", jobEn: "Gypsum", desc: "ديكورات جبس", descEn: "Gypsum decor", country: "qa", city: "الدوحة", area: "السد", exp: "10 سنوات خبرة", expEn: "10 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w13", name: "علي كريم", phone: "9647701234567", job: "حداد", jobEn: "Blacksmith", desc: "حدادة عامة", descEn: "General blacksmith", country: "iq", city: "بغداد", area: "الكرادة", exp: "13 سنة خبرة", expEn: "13 years", verified: true, verifyMethod: "sms" },
+  { id: "w14", name: "جورج سمعان", phone: "96131234567", job: "ألمنيوم", jobEn: "Aluminum", desc: "شبابيك ألمنيوم", descEn: "Aluminum windows", country: "lb", city: "بيروت", area: "الأشرفية", exp: "7 سنوات خبرة", expEn: "7 years", verified: true, verifyMethod: "whatsapp" },
+  { id: "w15", name: "Youssef Benali", phone: "212612345678", job: "نجار", jobEn: "Carpenter", desc: "نجارة أثاث", descEn: "Furniture carpentry", country: "ma", city: "الدار البيضاء", area: "عين الدياب", exp: "20 سنة خبرة", expEn: "20 years", verified: true, verifyMethod: "email" },
+  { id: "w16", name: "Mehmet Yılmaz", phone: "905321234567", job: "بناء", jobEn: "Builder", desc: "بناء وترميم", descEn: "Building & renovation", country: "tr", city: "إسطنبول", area: "فاتح", exp: "9 سنوات خبرة", expEn: "9 years", verified: true, verifyMethod: "whatsapp" }
+];
+
+// ========== APP STATE ==========
 let currentLang = localStorage.getItem('mahanti_lang') || 'ar';
 let currentCountryFilter = '';
 let currentJobFilter = 'all';
 let currentVerifyMethod = 'whatsapp';
 let currentPhone = '';
-let countriesData = {};
-let translations = {};
+let countriesData = COUNTRIES_DATA;
+let translations = I18N_DATA[currentLang];
 
 // ========== LANGUAGE ==========
 function setLang(lang) {
@@ -18,38 +197,8 @@ function setLang(lang) {
   location.reload();
 }
 
-// ========== API ==========
-async function apiGet(endpoint) {
-  try {
-    const res = await fetch(`${API_URL}${endpoint}`);
-    return await res.json();
-  } catch (err) {
-    console.error('API Error:', err);
-    return { success: false };
-  }
-}
-
-async function apiPost(endpoint, data) {
-  try {
-    const res = await fetch(`${API_URL}${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    return await res.json();
-  } catch (err) {
-    console.error('API Error:', err);
-    return { success: false };
-  }
-}
-
-// ========== TRANSLATIONS ==========
-async function loadTranslations() {
-  const result = await apiGet('/api/translations/' + currentLang);
-  if (result.success) {
-    translations = result.data;
-    applyTranslations();
-  }
+function t(key) {
+  return key.split('.').reduce((o, p) => o && o[p], translations) || key;
 }
 
 function applyTranslations() {
@@ -61,32 +210,17 @@ function applyTranslations() {
   });
 
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    const val = key.split('.').reduce((o, p) => o && o[p], translations);
-    if (val) el.textContent = val;
+    const val = t(el.dataset.i18n);
+    if (val && val !== el.dataset.i18n) el.textContent = val;
   });
 
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.dataset.i18nPlaceholder;
-    const val = key.split('.').reduce((o, p) => o && o[p], translations);
+    const val = t(el.dataset.i18nPlaceholder);
     if (val) el.placeholder = val;
   });
 }
 
-function t(key) {
-  return key.split('.').reduce((o, p) => o && o[p], translations) || key;
-}
-
 // ========== COUNTRIES ==========
-async function loadCountries() {
-  const result = await apiGet('/api/countries');
-  if (result.success) {
-    countriesData = result.data;
-    renderCountries();
-    populateCountrySelects();
-  }
-}
-
 function renderCountries() {
   const grid = document.getElementById('countriesGrid');
   if (!grid) return;
@@ -103,7 +237,6 @@ function renderCountries() {
 }
 
 function populateCountrySelects() {
-  // For registration page
   const regCountry = document.getElementById('regCountry');
   if (regCountry) {
     let html = `<option value="">${t('selectCountry')}</option>`;
@@ -114,7 +247,6 @@ function populateCountrySelects() {
     regCountry.innerHTML = html;
   }
 
-  // For search page
   const countryFilter = document.getElementById('countryFilter');
   if (countryFilter) {
     let html = `<option value="">${currentLang === 'ar' ? '🌍 جميع البلدان' : '🌍 All Countries'}</option>`;
@@ -191,30 +323,25 @@ function populateJobFilters() {
 }
 
 // ========== STATS ==========
-async function loadStats() {
-  const result = await apiGet('/api/stats');
-  if (result.success) {
-    const d = result.data;
-    const ids = ['statWorkers', 'statJobs', 'statCities', 'statCountries'];
-    const keys = ['workers', 'jobs', 'cities', 'countries'];
-    for (let i = 0; i < ids.length; i++) {
-      const el = document.getElementById(ids[i]);
-      if (el) el.textContent = d[keys[i]] || 0;
-    }
+function loadStats() {
+  const workers = WORKERS_DATA;
+  const jobs = [...new Set(workers.map(w => w.job))];
+  const cities = [...new Set(workers.map(w => w.city))];
+  const countryCodes = [...new Set(workers.map(w => w.country))];
+
+  const ids = ['statWorkers', 'statJobs', 'statCities', 'statCountries'];
+  const vals = [workers.length, jobs.length, cities.length, countryCodes.length];
+  for (let i = 0; i < ids.length; i++) {
+    const el = document.getElementById(ids[i]);
+    if (el) el.textContent = vals[i];
   }
 }
 
 // ========== WORKERS ==========
-async function loadWorkers() {
+function loadWorkers() {
   const list = document.getElementById('workersList');
   if (!list) return;
-
-  list.innerHTML = `<div style="text-align:center;padding:30px;"><div style="font-size:32px;">⏳</div>${currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</div>`;
-
-  const result = await apiGet('/api/workers');
-  if (result.success) {
-    renderWorkers(result.data);
-  }
+  renderWorkers(WORKERS_DATA);
 }
 
 function renderWorkers(workers) {
@@ -262,26 +389,38 @@ function renderWorkers(workers) {
   list.innerHTML = html;
 }
 
-// ========== SEARCH ==========
-async function filterWorkers() {
-  const searchTerm = document.getElementById('searchInput')?.value.trim() || '';
+// ========== SEARCH & FILTER ==========
+function filterWorkers() {
+  const searchTerm = document.getElementById('searchInput')?.value.trim().toLowerCase() || '';
   const cityFilter = document.getElementById('cityFilter')?.value || '';
   const countryFilter = document.getElementById('countryFilter')?.value || '';
-  const list = document.getElementById('workersList');
-  if (!list) return;
 
-  list.innerHTML = `<div style="text-align:center;padding:20px;">⏳ ${currentLang === 'ar' ? 'جاري البحث...' : 'Searching...'}</div>`;
+  let results = WORKERS_DATA;
 
-  let params = [];
-  if (searchTerm) params.push(`q=${encodeURIComponent(searchTerm)}`);
-  if (currentJobFilter !== 'all') params.push(`job=${encodeURIComponent(currentJobFilter)}`);
-  if (cityFilter) params.push(`city=${encodeURIComponent(cityFilter)}`);
-  if (countryFilter) params.push(`country=${encodeURIComponent(countryFilter)}`);
-
-  const result = await apiGet('/api/workers/search?' + params.join('&'));
-  if (result.success) {
-    renderWorkers(result.data);
+  if (searchTerm) {
+    results = results.filter(w => 
+      w.name.toLowerCase().includes(searchTerm) ||
+      w.job.toLowerCase().includes(searchTerm) ||
+      w.jobEn.toLowerCase().includes(searchTerm) ||
+      w.desc.toLowerCase().includes(searchTerm) ||
+      w.city.toLowerCase().includes(searchTerm) ||
+      w.area.toLowerCase().includes(searchTerm)
+    );
   }
+
+  if (currentJobFilter !== 'all') {
+    results = results.filter(w => w.job === currentJobFilter || w.jobEn === currentJobFilter);
+  }
+
+  if (cityFilter) {
+    results = results.filter(w => w.city === cityFilter);
+  }
+
+  if (countryFilter) {
+    results = results.filter(w => w.country === countryFilter);
+  }
+
+  renderWorkers(results);
 }
 
 function filterByJob(job, el) {
@@ -308,7 +447,7 @@ function selectVerify(el, method) {
   }
 }
 
-async function goToVerify() {
+function goToVerify() {
   const name = document.getElementById('regName').value.trim();
   const countryCode = document.getElementById('regCountry').value;
   const phoneRaw = document.getElementById('regPhone').value.trim();
@@ -329,30 +468,21 @@ async function goToVerify() {
   const codeDigits = c.code.replace('+', '');
   currentPhone = codeDigits + phoneRaw.replace(/^0+/, '');
 
-  const result = await apiPost('/api/verify/send', { 
-    phone: currentPhone, 
-    method: currentVerifyMethod,
-    email: email 
-  });
-
-  if (!result.success) {
-    alert('⚠️ ' + result.message);
-    return;
-  }
+  const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+  console.log('🔐 Demo OTP:', otpCode);
 
   document.getElementById('verifyPhoneNum').textContent = '+' + currentPhone;
   document.getElementById('regStep1').style.display = 'none';
   document.getElementById('regStep2').style.display = 'block';
   document.getElementById('successMsg').classList.add('show');
 
-  if (result.demoCode) {
-    console.log('🔐 Demo OTP:', result.demoCode);
-    setTimeout(() => {
-      const inputs = document.querySelectorAll('.otp-input');
-      const code = result.demoCode.split('');
-      inputs.forEach((input, i) => { if (code[i]) input.value = code[i]; });
-    }, 1000);
-  }
+  window._currentOTP = otpCode;
+
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.otp-input');
+    const code = otpCode.split('');
+    inputs.forEach((input, i) => { if (code[i]) input.value = code[i]; });
+  }, 1000);
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -366,7 +496,7 @@ function moveOtp(input, index) {
   if (allFilled) setTimeout(verifyOtp, 300);
 }
 
-async function verifyOtp() {
+function verifyOtp() {
   const code = Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
   const v = translations.validation || {};
 
@@ -375,17 +505,18 @@ async function verifyOtp() {
     return;
   }
 
-  const verifyResult = await apiPost('/api/verify/check', { phone: currentPhone, code });
-  if (!verifyResult.success) {
-    alert('⚠️ ' + verifyResult.message);
+  if (code !== window._currentOTP) {
+    alert('⚠️ ' + (v.otpInvalid || 'Invalid code'));
     return;
   }
 
   const countryCode = document.getElementById('regCountry').value;
   const jobKey = document.getElementById('regJob').value;
   const jobLabel = translations.jobs ? translations.jobs[jobKey] : jobKey;
+  const email = document.getElementById('regEmail').value.trim();
 
-  const workerData = {
+  const newWorker = {
+    id: 'w' + Date.now(),
     name: document.getElementById('regName').value.trim(),
     phone: currentPhone,
     email: email,
@@ -398,14 +529,15 @@ async function verifyOtp() {
     area: document.getElementById('regArea').value.trim(),
     exp: document.getElementById('regExp').value,
     expEn: document.getElementById('regExp').value,
+    verified: true,
     verifyMethod: currentVerifyMethod
   };
 
-  const regResult = await apiPost('/api/workers', workerData);
-  if (!regResult.success) {
-    alert('⚠️ ' + regResult.message);
-    return;
-  }
+  WORKERS_DATA.push(newWorker);
+
+  let saved = JSON.parse(localStorage.getItem('mahanti_workers') || '[]');
+  saved.push(newWorker);
+  localStorage.setItem('mahanti_workers', JSON.stringify(saved));
 
   document.getElementById('regStep2').style.display = 'none';
   document.getElementById('regStep3').style.display = 'block';
@@ -413,30 +545,27 @@ async function verifyOtp() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-async function resendCode() {
-  const result = await apiPost('/api/verify/send', { 
-    phone: currentPhone, 
-    method: currentVerifyMethod 
-  });
-  if (result.success) {
-    alert('🔄 ' + (currentLang === 'ar' ? 'تم إعادة الإرسال!' : 'Resent!'));
-    document.querySelectorAll('.otp-input').forEach(input => input.value = '');
-    document.querySelectorAll('.otp-input')[0].focus();
-    if (result.demoCode) console.log('🔐 New Demo OTP:', result.demoCode);
-  } else {
-    alert('⚠️ ' + result.message);
-  }
+function resendCode() {
+  const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+  window._currentOTP = otpCode;
+  console.log('🔐 New Demo OTP:', otpCode);
+  alert('🔄 ' + (currentLang === 'ar' ? 'تم إعادة الإرسال!' : 'Resent!'));
+  document.querySelectorAll('.otp-input').forEach(input => input.value = '');
+  document.querySelectorAll('.otp-input')[0].focus();
 }
 
 // ========== INIT ==========
-document.addEventListener('DOMContentLoaded', async function() {
-  // Step 1: Load countries first (needed for everything)
-  await loadCountries();
+document.addEventListener('DOMContentLoaded', function() {
+  const saved = JSON.parse(localStorage.getItem('mahanti_workers') || '[]');
+  if (saved.length > 0) {
+    WORKERS_DATA = WORKERS_DATA.concat(saved);
+  }
 
-  // Step 2: Load translations
-  await loadTranslations();
+  translations = I18N_DATA[currentLang];
+  applyTranslations();
+  renderCountries();
+  populateCountrySelects();
 
-  // Step 3: Page-specific init
   if (document.getElementById('workersList')) {
     loadWorkers();
     populateJobFilters();
@@ -450,7 +579,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     populateJobs();
   }
 
-  // URL params
   const urlParams = new URLSearchParams(window.location.search);
   const countryParam = urlParams.get('country');
   const jobParam = urlParams.get('job');
@@ -468,4 +596,4 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
 
-console.log('🛠️ Mahanti V2 Loaded!');
+console.log('🛠️ Mahanti V2 - Standalone - 35+ countries embedded!');
