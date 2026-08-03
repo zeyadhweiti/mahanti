@@ -1,6 +1,5 @@
 /* ============================================
    MAHANTI V2 - Global Trades Directory
-   Multi-language | Multi-country | Multi-verify
    ============================================ */
 
 const API_URL = window.location.origin;
@@ -12,70 +11,21 @@ let currentPhone = '';
 let countriesData = {};
 let translations = {};
 
-// ========== LANGUAGE SYSTEM ==========
-async function loadTranslations() {
-  const res = await fetch(`${API_URL}/api/translations/${currentLang}`);
-  const result = await res.json();
-  if (result.success) {
-    translations = result.data;
-    applyTranslations();
-  }
-}
-
-function applyTranslations() {
-  document.documentElement.lang = currentLang;
-  document.body.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-
-  // Update lang buttons
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === currentLang);
-  });
-
-  // Translate all elements with data-i18n
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    const value = getNestedValue(translations, key);
-    if (value) el.textContent = value;
-  });
-
-  // Translate placeholders
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.dataset.i18nPlaceholder;
-    const value = getNestedValue(translations, key);
-    if (value) el.placeholder = value;
-  });
-
-  // Update page title
-  const appName = translations.appName || 'Mahanti';
-  if (document.title.includes('Mahanti') || document.title.includes('مهنتي')) {
-    document.title = document.title.replace(/Mahanti|مهنتي/g, appName);
-  }
-}
-
-function getNestedValue(obj, path) {
-  return path.split('.').reduce((o, p) => o && o[p], obj);
-}
-
+// ========== LANGUAGE ==========
 function setLang(lang) {
   currentLang = lang;
   localStorage.setItem('mahanti_lang', lang);
-  loadTranslations().then(() => {
-    // Reload page-specific data
-    if (document.getElementById('workersList')) loadWorkers();
-    if (document.getElementById('countriesGrid')) loadCountries();
-    if (document.getElementById('regCountry')) populateCountries();
-    if (document.getElementById('regJob')) populateJobs();
-  });
+  location.reload();
 }
 
-// ========== API HELPERS ==========
+// ========== API ==========
 async function apiGet(endpoint) {
   try {
     const res = await fetch(`${API_URL}${endpoint}`);
     return await res.json();
   } catch (err) {
     console.error('API Error:', err);
-    return { success: false, message: 'Connection error' };
+    return { success: false };
   }
 }
 
@@ -89,18 +39,51 @@ async function apiPost(endpoint, data) {
     return await res.json();
   } catch (err) {
     console.error('API Error:', err);
-    return { success: false, message: 'Connection error' };
+    return { success: false };
   }
 }
 
-// ========== COUNTRIES DATA ==========
+// ========== TRANSLATIONS ==========
+async function loadTranslations() {
+  const result = await apiGet('/api/translations/' + currentLang);
+  if (result.success) {
+    translations = result.data;
+    applyTranslations();
+  }
+}
+
+function applyTranslations() {
+  document.documentElement.lang = currentLang;
+  document.body.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+  });
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = key.split('.').reduce((o, p) => o && o[p], translations);
+    if (val) el.textContent = val;
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    const val = key.split('.').reduce((o, p) => o && o[p], translations);
+    if (val) el.placeholder = val;
+  });
+}
+
+function t(key) {
+  return key.split('.').reduce((o, p) => o && o[p], translations) || key;
+}
+
+// ========== COUNTRIES ==========
 async function loadCountries() {
   const result = await apiGet('/api/countries');
   if (result.success) {
     countriesData = result.data;
     renderCountries();
-    populateCountryFilters();
-    populateCountries();
+    populateCountrySelects();
   }
 }
 
@@ -108,69 +91,72 @@ function renderCountries() {
   const grid = document.getElementById('countriesGrid');
   if (!grid) return;
 
-  grid.innerHTML = Object.entries(countriesData).map(([code, c]) => `
-    <a href="search.html?country=${code}" class="country-chip">
+  let html = '';
+  for (const [code, c] of Object.entries(countriesData)) {
+    const name = currentLang === 'ar' ? c.nameAr : c.nameEn;
+    html += `<a href="search.html?country=${code}" class="country-chip">
       <span class="flag">${c.flag}</span>
-      <span>${currentLang === 'ar' ? c.nameAr : c.nameEn}</span>
-    </a>
-  `).join('');
+      <span>${name}</span>
+    </a>`;
+  }
+  grid.innerHTML = html;
 }
 
-function populateCountryFilters() {
-  const filters = ['countryFilter'];
-  filters.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const currentVal = el.value;
-    const allText = currentLang === 'ar' ? '🌍 جميع البلدان' : '🌍 All Countries';
-    el.innerHTML = `<option value="">${allText}</option>` + 
-      Object.entries(countriesData).map(([code, c]) => 
-        `<option value="${code}" ${currentVal === code ? 'selected' : ''}>${c.flag} ${currentLang === 'ar' ? c.nameAr : c.nameEn}</option>`
-      ).join('');
-  });
+function populateCountrySelects() {
+  // For registration page
+  const regCountry = document.getElementById('regCountry');
+  if (regCountry) {
+    let html = `<option value="">${t('selectCountry')}</option>`;
+    for (const [code, c] of Object.entries(countriesData)) {
+      const name = currentLang === 'ar' ? c.nameAr : c.nameEn;
+      html += `<option value="${code}">${c.flag} ${name} (${c.code})</option>`;
+    }
+    regCountry.innerHTML = html;
+  }
+
+  // For search page
+  const countryFilter = document.getElementById('countryFilter');
+  if (countryFilter) {
+    let html = `<option value="">${currentLang === 'ar' ? '🌍 جميع البلدان' : '🌍 All Countries'}</option>`;
+    for (const [code, c] of Object.entries(countriesData)) {
+      const name = currentLang === 'ar' ? c.nameAr : c.nameEn;
+      html += `<option value="${code}">${c.flag} ${name}</option>`;
+    }
+    countryFilter.innerHTML = html;
+  }
 }
 
-function populateCountries() {
-  const el = document.getElementById('regCountry');
-  if (!el) return;
-  const selectText = currentLang === 'ar' ? 'اختر البلد' : 'Select Country';
-  el.innerHTML = `<option value="">${selectText}</option>` + 
-    Object.entries(countriesData).map(([code, c]) => 
-      `<option value="${code}">${c.flag} ${currentLang === 'ar' ? c.nameAr : c.nameEn} (${c.code})</option>`
-    ).join('');
-}
-
-// ========== CITIES & PHONE BY COUNTRY ==========
 function onRegCountryChange() {
-  const countryCode = document.getElementById('regCountry').value;
-  if (!countryCode || !countriesData[countryCode]) return;
+  const code = document.getElementById('regCountry').value;
+  if (!code || !countriesData[code]) return;
 
-  const country = countriesData[countryCode];
-
-  // Update phone code
-  document.getElementById('phoneCode').textContent = country.code;
+  const c = countriesData[code];
+  document.getElementById('phoneCode').textContent = c.code;
   document.getElementById('phoneHint').textContent = 
-    (currentLang === 'ar' ? 'مثال: ' : 'Example: ') + country.phoneExample;
+    (currentLang === 'ar' ? 'مثال: ' : 'Example: ') + c.phoneExample;
 
-  // Update cities
   const citySelect = document.getElementById('regCity');
-  const selectText = currentLang === 'ar' ? 'اختر المدينة' : 'Select City';
-  citySelect.innerHTML = `<option value="">${selectText}</option>` + 
-    country.cities.map(city => `<option value="${city}">${city}</option>`).join('');
+  if (citySelect) {
+    let html = `<option value="">${t('selectCity')}</option>`;
+    for (const city of c.cities) {
+      html += `<option value="${city}">${city}</option>`;
+    }
+    citySelect.innerHTML = html;
+  }
 }
 
 function onCountryChange() {
   currentCountryFilter = document.getElementById('countryFilter').value;
-
-  // Update city filter based on country
   const cityFilter = document.getElementById('cityFilter');
+
   if (cityFilter && currentCountryFilter && countriesData[currentCountryFilter]) {
-    const allCitiesText = currentLang === 'ar' ? '📍 جميع المدن' : '📍 All Cities';
-    cityFilter.innerHTML = `<option value="">${allCitiesText}</option>` + 
-      countriesData[currentCountryFilter].cities.map(city => `<option value="${city}">${city}</option>`).join('');
+    let html = `<option value="">${currentLang === 'ar' ? '📍 جميع المدن' : '📍 All Cities'}</option>`;
+    for (const city of countriesData[currentCountryFilter].cities) {
+      html += `<option value="${city}">${city}</option>`;
+    }
+    cityFilter.innerHTML = html;
   } else if (cityFilter) {
-    const allCitiesText = currentLang === 'ar' ? '📍 جميع المدن' : '📍 All Cities';
-    cityFilter.innerHTML = `<option value="">${allCitiesText}</option>`;
+    cityFilter.innerHTML = `<option value="">${currentLang === 'ar' ? '📍 جميع المدن' : '📍 All Cities'}</option>`;
   }
 
   filterWorkers();
@@ -179,14 +165,29 @@ function onCountryChange() {
 // ========== JOBS ==========
 function populateJobs() {
   const el = document.getElementById('regJob');
-  if (!el) return;
+  if (!el || !translations.jobs) return;
 
-  const jobs = translations.jobs || {};
-  const selectText = currentLang === 'ar' ? 'اختر المهنة' : 'Select Trade';
-  el.innerHTML = `<option value="">${selectText}</option>` + 
-    Object.entries(jobs).map(([key, label]) => 
-      `<option value="${key}">${label}</option>`
-    ).join('');
+  let html = `<option value="">${t('selectJob')}</option>`;
+  for (const [key, label] of Object.entries(translations.jobs)) {
+    html += `<option value="${key}">${label}</option>`;
+  }
+  el.innerHTML = html;
+}
+
+function populateJobFilters() {
+  const container = document.getElementById('jobFilters');
+  if (!container || !translations.jobs) return;
+
+  const allText = currentLang === 'ar' ? 'الكل' : 'All';
+  let html = `<button class="filter-tag active" onclick="filterByJob('all', this)">${allText}</button>`;
+
+  const jobEntries = Object.entries(translations.jobs);
+  for (let i = 0; i < Math.min(jobEntries.length, 12); i++) {
+    const [key, label] = jobEntries[i];
+    const name = label.replace(/[🧱🪵🔩🔥🔧⚡🚗🎨🏠🏗️🪟❄️🛋️🚪🧹🌳🛗📌]/g, '').trim();
+    html += `<button class="filter-tag" onclick="filterByJob('${key}', this)">${name}</button>`;
+  }
+  container.innerHTML = html;
 }
 
 // ========== STATS ==========
@@ -194,20 +195,21 @@ async function loadStats() {
   const result = await apiGet('/api/stats');
   if (result.success) {
     const d = result.data;
-    if (document.getElementById('statWorkers')) document.getElementById('statWorkers').textContent = d.workers;
-    if (document.getElementById('statJobs')) document.getElementById('statJobs').textContent = d.jobs;
-    if (document.getElementById('statCities')) document.getElementById('statCities').textContent = d.cities;
-    if (document.getElementById('statCountries')) document.getElementById('statCountries').textContent = d.countries;
+    const ids = ['statWorkers', 'statJobs', 'statCities', 'statCountries'];
+    const keys = ['workers', 'jobs', 'cities', 'countries'];
+    for (let i = 0; i < ids.length; i++) {
+      const el = document.getElementById(ids[i]);
+      if (el) el.textContent = d[keys[i]] || 0;
+    }
   }
 }
 
-// ========== LOAD WORKERS ==========
+// ========== WORKERS ==========
 async function loadWorkers() {
   const list = document.getElementById('workersList');
   if (!list) return;
 
-  const loadingText = currentLang === 'ar' ? '⏳ جاري تحميل البيانات...' : '⏳ Loading...';
-  list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-gray);"><div style="font-size:32px;margin-bottom:10px;">⏳</div>${loadingText}</div>`;
+  list.innerHTML = `<div style="text-align:center;padding:30px;"><div style="font-size:32px;">⏳</div>${currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</div>`;
 
   const result = await apiGet('/api/workers');
   if (result.success) {
@@ -220,72 +222,63 @@ function renderWorkers(workers) {
   if (!list) return;
 
   if (workers.length === 0) {
-    const noResults = translations.noResults || 'No Results';
-    const noResultsDesc = translations.noResultsDesc || 'Try different keywords';
     list.innerHTML = `
-      <div style="text-align:center;padding:40px 20px;color:var(--text-gray);">
-        <div style="font-size:48px;margin-bottom:12px;">😕</div>
-        <h3 style="color:var(--primary-green);margin-bottom:8px;">${noResults}</h3>
-        <p>${noResultsDesc}</p>
+      <div style="text-align:center;padding:40px;color:var(--text-gray);">
+        <div style="font-size:48px;">😕</div>
+        <h3 style="color:var(--primary-green);">${t('noResults')}</h3>
+        <p>${t('noResultsDesc')}</p>
       </div>`;
     return;
   }
 
-  list.innerHTML = workers.map(w => {
-    const country = countriesData[w.country];
-    const flag = country ? country.flag : '🌍';
-    const countryName = country ? (currentLang === 'ar' ? country.nameAr : country.nameEn) : w.country;
+  let html = '';
+  for (const w of workers) {
+    const c = countriesData[w.country] || { flag: '🌍', nameAr: w.country, nameEn: w.country };
+    const countryName = currentLang === 'ar' ? c.nameAr : c.nameEn;
     const jobName = currentLang === 'ar' ? w.job : (w.jobEn || w.job);
     const desc = currentLang === 'ar' ? w.desc : (w.descEn || w.desc);
     const exp = currentLang === 'ar' ? w.exp : (w.expEn || w.exp);
-    const locationLabel = getNestedValue(translations, 'workerCard.location') || '📍';
-    const expLabel = getNestedValue(translations, 'workerCard.experience') || '⭐';
-    const descLabel = getNestedValue(translations, 'workerCard.description') || '📝';
-    const waText = getNestedValue(translations, 'whatsapp') || '📱 WhatsApp';
-    const callText = getNestedValue(translations, 'call') || '📞 Call';
 
-    return `
+    html += `
     <div class="worker-card" data-job="${w.job}" data-city="${w.city}" data-country="${w.country}">
       <div class="worker-header">
         <div class="worker-name">
           ${w.name}
-          <span class="worker-country">${flag} ${countryName}</span>
+          <span class="worker-country">${c.flag} ${countryName}</span>
         </div>
         <div class="worker-job">${jobName}</div>
       </div>
       <div class="worker-info">
-        <span>${locationLabel} ${w.city} - ${w.area}</span><br>
-        <span>${expLabel} ${exp}</span><br>
-        <span>${descLabel} ${desc}</span>
+        <span>📍 ${w.city} - ${w.area}</span><br>
+        <span>⭐ ${exp}</span><br>
+        <span>📝 ${desc}</span>
       </div>
       <div class="worker-actions">
-        <a href="https://wa.me/${w.phone}" class="btn btn-whatsapp" target="_blank">${waText}</a>
-        <a href="tel:${w.phone}" class="btn btn-call">${callText}</a>
+        <a href="https://wa.me/${w.phone}" class="btn btn-whatsapp" target="_blank">📱 ${t('whatsapp')}</a>
+        <a href="tel:+${w.phone}" class="btn btn-call">📞 ${t('call')}</a>
       </div>
-    </div>
-  `}).join('');
+    </div>`;
+  }
+  list.innerHTML = html;
 }
 
-// ========== SEARCH & FILTER ==========
+// ========== SEARCH ==========
 async function filterWorkers() {
   const searchTerm = document.getElementById('searchInput')?.value.trim() || '';
   const cityFilter = document.getElementById('cityFilter')?.value || '';
   const countryFilter = document.getElementById('countryFilter')?.value || '';
-
   const list = document.getElementById('workersList');
   if (!list) return;
 
-  const loadingText = currentLang === 'ar' ? '⏳ جاري البحث...' : '⏳ Searching...';
-  list.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-gray);">${loadingText}</div>`;
+  list.innerHTML = `<div style="text-align:center;padding:20px;">⏳ ${currentLang === 'ar' ? 'جاري البحث...' : 'Searching...'}</div>`;
 
-  let endpoint = '/api/workers/search?';
-  const params = [];
+  let params = [];
   if (searchTerm) params.push(`q=${encodeURIComponent(searchTerm)}`);
   if (currentJobFilter !== 'all') params.push(`job=${encodeURIComponent(currentJobFilter)}`);
   if (cityFilter) params.push(`city=${encodeURIComponent(cityFilter)}`);
   if (countryFilter) params.push(`country=${encodeURIComponent(countryFilter)}`);
 
-  const result = await apiGet(endpoint + params.join('&'));
+  const result = await apiGet('/api/workers/search?' + params.join('&'));
   if (result.success) {
     renderWorkers(result.data);
   }
@@ -298,13 +291,12 @@ function filterByJob(job, el) {
   filterWorkers();
 }
 
-// ========== REGISTRATION FLOW ==========
+// ========== REGISTRATION ==========
 function selectVerify(el, method) {
   document.querySelectorAll('.verify-method').forEach(m => m.classList.remove('selected'));
   el.classList.add('selected');
   currentVerifyMethod = method;
 
-  // Update verify text
   const methodText = document.getElementById('verifyMethodText');
   if (methodText) {
     const texts = {
@@ -324,22 +316,19 @@ async function goToVerify() {
   const job = document.getElementById('regJob').value;
   const city = document.getElementById('regCity').value;
   const area = document.getElementById('regArea').value.trim();
-
   const v = translations.validation || {};
 
-  if (!name) { alert('⚠️ ' + (v.nameRequired || 'Name required')); document.getElementById('regName').focus(); return; }
-  if (!countryCode) { alert('⚠️ ' + (v.countryRequired || 'Country required')); document.getElementById('regCountry').focus(); return; }
-  if (!phoneRaw) { alert('⚠️ ' + (v.phoneRequired || 'Phone required')); document.getElementById('regPhone').focus(); return; }
-  if (!job) { alert('⚠️ ' + (v.jobRequired || 'Job required')); document.getElementById('regJob').focus(); return; }
-  if (!city) { alert('⚠️ ' + (v.cityRequired || 'City required')); document.getElementById('regCity').focus(); return; }
-  if (!area) { alert('⚠️ ' + (v.areaRequired || 'Area required')); document.getElementById('regArea').focus(); return; }
+  if (!name) { alert('⚠️ ' + (v.nameRequired || 'Name required')); return; }
+  if (!countryCode) { alert('⚠️ ' + (v.countryRequired || 'Country required')); return; }
+  if (!phoneRaw) { alert('⚠️ ' + (v.phoneRequired || 'Phone required')); return; }
+  if (!job) { alert('⚠️ ' + (v.jobRequired || 'Job required')); return; }
+  if (!city) { alert('⚠️ ' + (v.cityRequired || 'City required')); return; }
+  if (!area) { alert('⚠️ ' + (v.areaRequired || 'Area required')); return; }
 
-  // Build full phone with country code
-  const country = countriesData[countryCode];
-  const codeDigits = country.code.replace('+', '');
+  const c = countriesData[countryCode];
+  const codeDigits = c.code.replace('+', '');
   currentPhone = codeDigits + phoneRaw.replace(/^0+/, '');
 
-  // Send OTP
   const result = await apiPost('/api/verify/send', { 
     phone: currentPhone, 
     method: currentVerifyMethod,
@@ -351,7 +340,6 @@ async function goToVerify() {
     return;
   }
 
-  // Show verification step
   document.getElementById('verifyPhoneNum').textContent = '+' + currentPhone;
   document.getElementById('regStep1').style.display = 'none';
   document.getElementById('regStep2').style.display = 'block';
@@ -360,9 +348,9 @@ async function goToVerify() {
   if (result.demoCode) {
     console.log('🔐 Demo OTP:', result.demoCode);
     setTimeout(() => {
-      const otpInputs = document.querySelectorAll('.otp-input');
+      const inputs = document.querySelectorAll('.otp-input');
       const code = result.demoCode.split('');
-      otpInputs.forEach((input, i) => { if (code[i]) input.value = code[i]; });
+      inputs.forEach((input, i) => { if (code[i]) input.value = code[i]; });
     }, 1000);
   }
 
@@ -372,17 +360,14 @@ async function goToVerify() {
 function moveOtp(input, index) {
   input.value = input.value.replace(/[^0-9]/g, '');
   if (input.value && index < 3) {
-    const inputs = document.querySelectorAll('.otp-input');
-    inputs[index + 1].focus();
+    document.querySelectorAll('.otp-input')[index + 1].focus();
   }
-  const allInputs = document.querySelectorAll('.otp-input');
-  const allFilled = Array.from(allInputs).every(i => i.value.length === 1);
+  const allFilled = Array.from(document.querySelectorAll('.otp-input')).every(i => i.value.length === 1);
   if (allFilled) setTimeout(verifyOtp, 300);
 }
 
 async function verifyOtp() {
-  const otpInputs = document.querySelectorAll('.otp-input');
-  const code = Array.from(otpInputs).map(i => i.value).join('');
+  const code = Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
   const v = translations.validation || {};
 
   if (code.length !== 4) {
@@ -391,22 +376,19 @@ async function verifyOtp() {
   }
 
   const verifyResult = await apiPost('/api/verify/check', { phone: currentPhone, code });
-
   if (!verifyResult.success) {
     alert('⚠️ ' + verifyResult.message);
     return;
   }
 
-  // Register worker
   const countryCode = document.getElementById('regCountry').value;
-  const country = countriesData[countryCode];
   const jobKey = document.getElementById('regJob').value;
   const jobLabel = translations.jobs ? translations.jobs[jobKey] : jobKey;
 
   const workerData = {
     name: document.getElementById('regName').value.trim(),
     phone: currentPhone,
-    email: document.getElementById('regEmail').value.trim(),
+    email: email,
     job: jobLabel || jobKey,
     jobEn: jobKey,
     desc: document.getElementById('regDesc').value.trim(),
@@ -420,7 +402,6 @@ async function verifyOtp() {
   };
 
   const regResult = await apiPost('/api/workers', workerData);
-
   if (!regResult.success) {
     alert('⚠️ ' + regResult.message);
     return;
@@ -449,9 +430,13 @@ async function resendCode() {
 
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', async function() {
+  // Step 1: Load countries first (needed for everything)
   await loadCountries();
+
+  // Step 2: Load translations
   await loadTranslations();
 
+  // Step 3: Page-specific init
   if (document.getElementById('workersList')) {
     loadWorkers();
     populateJobFilters();
@@ -467,8 +452,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   // URL params
   const urlParams = new URLSearchParams(window.location.search);
-  const jobParam = urlParams.get('job');
   const countryParam = urlParams.get('country');
+  const jobParam = urlParams.get('job');
 
   if (countryParam && document.getElementById('countryFilter')) {
     document.getElementById('countryFilter').value = countryParam;
@@ -481,22 +466,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   }
 });
 
-function populateJobFilters() {
-  const container = document.getElementById('jobFilters');
-  if (!container) return;
-  const allText = currentLang === 'ar' ? 'الكل' : 'All';
-  const jobs = translations.jobs || {};
+document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
 
-  container.innerHTML = `<button class="filter-tag active" onclick="filterByJob('all', this)">${allText}</button>` + 
-    Object.entries(jobs).slice(0, 9).map(([key, label]) => {
-      const name = label.replace(/[🧱🪵🔩🔥🔧⚡🚗🎨🏠🏗️🪟❄️🛋️🚪🧹🌳🛗📌]/g, '').trim();
-      return `<button class="filter-tag" onclick="filterByJob('${key}', this)">${name}</button>`;
-    }).join('');
-}
-
-// Prevent zoom on double-tap
-document.addEventListener('dblclick', function(event) {
-  event.preventDefault();
-}, { passive: false });
-
-console.log('🛠️ Mahanti V2 - Global Trades Directory Loaded!');
+console.log('🛠️ Mahanti V2 Loaded!');
