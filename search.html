@@ -46,66 +46,33 @@
                 <button class="filter-tag" onclick="filterByJob('بليط', this)">بليط</button>
             </div>
 
-            <!-- City Filter -->
-            <div class="form-group" style="margin-bottom: 16px;">
+            <!-- Country & City Filters (تحديد الدولة ثم المدينة) -->
+            <div class="form-group" style="display: flex; gap: 10px; margin-bottom: 16px;">
+                <!-- 1. اختيار الدولة -->
+                <select class="form-select" id="countryFilter" onchange="updateCitiesOptions()">
+                    <option value="">🌍 جميع الدول</option>
+                    <option value="JO">🇯🇴 الأردن</option>
+                    <option value="SA">🇸🇦 السعودية</option>
+                    <option value="EG">🇪🇬 مصر</option>
+                    <option value="AE">🇦🇪 الإمارات</option>
+                </select>
+
+                <!-- 2. اختيار المدينة (تتحدث تلقائياً حسب الدولة) -->
                 <select class="form-select" id="cityFilter" onchange="filterWorkers()">
                     <option value="">📍 جميع المدن</option>
-
-                    <!-- مدن الأردن -->
-                    <optgroup label="🇯🇴 الأردن">
-                        <option value="عمان">عمان</option>
-                        <option value="إربد">إربد</option>
-                        <option value="الزرقاء">الزرقاء</option>
-                        <option value="العقبة">العقبة</option>
-                        <option value="السلط">السلط</option>
-                        <option value="المفرق">المفرق</option>
-                        <option value="جرش">جرش</option>
-                        <option value="مأدبا">مأدبا</option>
-                    </optgroup>
-
-                    <!-- مدن السعودية -->
-                    <optgroup label="🇸🇦 السعودية">
-                        <option value="الرياض">الرياض</option>
-                        <option value="جدة">جدة</option>
-                        <option value="مكة">مكة المكرمة</option>
-                        <option value="المدينة">المدينة المنورة</option>
-                        <option value="الدمام">الدمام</option>
-                        <option value="الخبر">الخبر</option>
-                        <option value="أبها">أبها</option>
-                        <option value="تبوك">تبوك</option>
-                        <option value="بريدة">بريدة</option>
-                        <option value="الطائف">الطائف</option>
-                        <option value="حائل">حائل</option>
-                    </optgroup>
-
-                    <!-- مدن مصر -->
-                    <optgroup label="🇪🇬 مصر">
-                        <option value="القاهرة">القاهرة</option>
-                        <option value="الإسكندرية">الإسكندرية</option>
-                        <option value="الجيزة">الجيزة</option>
-                        <option value="المنصورة">المنصورة</option>
-                        <option value="طنطا">طنطا</option>
-                    </optgroup>
-
-                    <!-- مدن الإمارات -->
-                    <optgroup label="🇦🇪 الإمارات">
-                        <option value="دبي">دبي</option>
-                        <option value="أبوظبي">أبوظبي</option>
-                        <option value="الشارقة">الشارقة</option>
-                    </optgroup>
                 </select>
             </div>
 
             <!-- Workers List -->
             <div id="workersList">
                 <!-- Worker 1 -->
-                <div class="worker-card" data-job="بناء" data-city="عمان">
+                <div class="worker-card" data-job="بناء" data-city="عمان" data-country="JO">
                     <div class="worker-header">
                         <div class="worker-name">أحمد محمد العلي</div>
                         <div class="worker-job">بناء</div>
                     </div>
                     <div class="worker-info">
-                        <span>📍 عمان - خلدا</span><br>
+                        <span>📍 الأردن - عمان (خلدا)</span><br>
                         <span>⭐ 5 سنوات خبرة</span><br>
                         <span>📝 بناء طوب وقصارة وتشطيب</span>
                     </div>
@@ -116,13 +83,13 @@
                 </div>
 
                 <!-- Worker 2 -->
-                <div class="worker-card" data-job="نجار" data-city="إربد">
+                <div class="worker-card" data-job="نجار" data-city="إربد" data-country="JO">
                     <div class="worker-header">
                         <div class="worker-name">خالد عبدالرحمن</div>
                         <div class="worker-job">نجار</div>
                     </div>
                     <div class="worker-info">
-                        <span>📍 إربد - شارع الجامعة</span><br>
+                        <span>📍 الأردن - إربد (شارع الجامعة)</span><br>
                         <span>⭐ 12 سنة خبرة</span><br>
                         <span>📝 نجارة أبواب وشبابيك ودواليب</span>
                     </div>
@@ -133,13 +100,13 @@
                 </div>
 
                 <!-- Worker 3 -->
-                <div class="worker-card" data-job="حداد" data-city="الرياض">
+                <div class="worker-card" data-job="حداد" data-city="الرياض" data-country="SA">
                     <div class="worker-header">
                         <div class="worker-name">سلطان المطيري</div>
                         <div class="worker-job">حداد</div>
                     </div>
                     <div class="worker-info">
-                        <span>📍 الرياض - حي النسيم</span><br>
+                        <span>📍 السعودية - الرياض (حي النسيم)</span><br>
                         <span>⭐ 8 سنوات خبرة</span><br>
                         <span>📝 حدادة أبواب حديد وشبابيك ودرابزين</span>
                     </div>
@@ -150,19 +117,19 @@
                 </div>
 
                 <!-- Worker 4 -->
-                <div class="worker-card" data-job="سباك" data-city="الزرقاء">
+                <div class="worker-card" data-job="سباك" data-city="القاهرة" data-country="EG">
                     <div class="worker-header">
-                        <div class="worker-name">عبدالله القحطاني</div>
+                        <div class="worker-name">محمود السيد</div>
                         <div class="worker-job">سباك</div>
                     </div>
                     <div class="worker-info">
-                        <span>📍 الزرقاء - الزرقاء الجديدة</span><br>
+                        <span>📍 مصر - القاهرة (مدينة نصر)</span><br>
                         <span>⭐ 7 سنوات خبرة</span><br>
-                        <span>📝 سباكة مواسير وصرف صحي وتركيب سخانات</span>
+                        <span>📝 سباكة مواسير وصرف صحي وتركيب أدوات صحية</span>
                     </div>
                     <div class="worker-actions">
-                        <a href="https://wa.me/962770000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-                        <a href="tel:0770000000" class="btn btn-call">📞 اتصال</a>
+                        <a href="https://wa.me/201000000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
+                        <a href="tel:01000000000" class="btn btn-call">📞 اتصال</a>
                     </div>
                 </div>
 
@@ -182,6 +149,47 @@
             <p style="margin-top: 8px; opacity: 0.7;">© 2026 مهنتي - جميع الحقوق محفوظة</p>
         </footer>
     </div>
+
+    <!-- Script لتحديث المدن تلقائياً حسب الدولة والتصفية -->
+    <script>
+        const citiesByCountry = {
+            JO: ["عمان", "إربد", "الزرقاء", "العقبة", "السلط", "المفرق", "جرش", "مأدبا"],
+            SA: ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "بريدة"],
+            EG: ["القاهرة", "الإسكندرية", "الجيزة", "المنصورة", "طنطا"],
+            AE: ["دبي", "أبوظبي", "الشارقة", "عجمان"]
+        };
+
+        function updateCitiesOptions() {
+            const countrySelect = document.getElementById('countryFilter');
+            const citySelect = document.getElementById('cityFilter');
+            const selectedCountry = countrySelect.value;
+
+            citySelect.innerHTML = '<option value="">📍 جميع المدن</option>';
+
+            if (selectedCountry && citiesByCountry[selectedCountry]) {
+                citiesByCountry[selectedCountry].forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            } else {
+                // إذا لم يتم اختيار دولة، عرض جميع مدن كافة الدول
+                Object.values(citiesByCountry).flat().forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            filterWorkers();
+        }
+
+        // إظهار كافة المدن عند أول فتح للصفحة
+        document.addEventListener("DOMContentLoaded", () => {
+            updateCitiesOptions();
+        });
+    </script>
     <script src="js/app.js"></script>
 </body>
 </html>
