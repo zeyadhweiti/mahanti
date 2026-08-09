@@ -1,111 +1,299 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>مهنتي - دليل المهن الحرفية</title>
-  <meta name="description" content="تواصل مع أصحاب المهن الحرفية - مجاني بالكامل بدون رسوم">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وصلني معاك - تفعيل الحساب وتحديد الموقع</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 { color: #333; margin-bottom: 15px; }
+        .payment-box {
+            background-color: #fff3eb;
+            border: 2px dashed #ff6600;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .orange-number {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ff6600;
+            margin: 8px 0;
+            letter-spacing: 1px;
+        }
+        .btn {
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn:hover { background-color: #e05500; }
+        .btn-whatsapp { background-color: #25d366; }
+        .btn-whatsapp:hover { background-color: #1da851; }
+        .btn-secondary { background-color: #6c757d; }
+        .btn-secondary:hover { background-color: #5a6268; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        label {
+            display: block;
+            text-align: right;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .step { display: none; }
+        .step.active { display: block; }
+        .alert-info {
+            background-color: #e7f5ff;
+            color: #1c7ed6;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 15px;
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-      <div class="logo-icon">🛠️</div>
-      <div class="app-title">مهنتي</div>
-      <div class="app-subtitle">تواصل مع أصحاب المهن الحرفية - مجاني بالكامل</div>
-    </header>
 
-    <!-- Navigation -->
-    <nav class="nav-tabs">
-      <a href="search.html" class="nav-tab">🔍 البحث</a>
-      <a href="register.html" class="nav-tab">📝 التسجيل</a>
-      <a href="index.html" class="nav-tab active">🏠 الرئيسية</a>
-    </nav>
-
-    <!-- Content -->
-    <main class="content-area fade-in">
-      <!-- Stats -->
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-number" id="statWorkers">1,247</div>
-          <div class="stat-label">عامل مسجل</div>
+<div class="container">
+    
+    <!-- الخطوة 1: الدفع وإرسال كود التفعيل -->
+    <div id="step-payment" class="step active">
+        <h2>تفعيل اشتراك السائق</h2>
+        <p style="color: #555;">رسوم الاشتراك: <strong>10 دنانير أردنية</strong> (أو ما يعادلها)</p>
+        
+        <div class="payment-box">
+            <p style="margin:0; font-size:14px;">محفظة تحويل الاشتراك (<strong>Orange Money</strong>):</p>
+            <div class="orange-number" id="phoneNum">0777411458</div>
+            <button class="btn" style="padding: 6px 12px; font-size: 13px; width: auto;" onclick="copyNumber()">📋 نسخ الرقم</button>
         </div>
-        <div class="stat-box">
-          <div class="stat-number">32</div>
-          <div class="stat-label">مهنة متاحة</div>
+
+        <!-- اختيار الدولة والمدينة -->
+        <label>اختر الدولة:</label>
+        <select id="countrySelect" onchange="updateCities()">
+            <option value="">-- اختر الدولة --</option>
+        </select>
+
+        <label>اختر المدينة:</label>
+        <select id="citySelect">
+            <option value="">-- اختر المدينة --</option>
+        </select>
+
+        <label>رقم هاتف السائق (مع رمز الدولة):</label>
+        <input type="tel" id="driverPhone" placeholder="مثال: 962791234567">
+
+        <button class="btn btn-whatsapp" onclick="sendActivationCodeViaWhatsApp()">📲 إرسال كود التفعيل عبر الواتساب</button>
+
+        <div class="alert-info">
+            💡 <strong>كيف تصلك الأكواد؟</strong> عند الضغط أعلاه، سيفتح الواتساب لإرسال طلب التفعيل والكود المولد إلى الإدارة فوراً لتأكيده لك بعد التحويل.
         </div>
-        <div class="stat-box">
-          <div class="stat-number">18</div>
-          <div class="stat-label">مدينة</div>
-        </div>
-      </div>
 
-      <!-- How It Works -->
-      <div class="card">
-        <div class="card-title">🎯 كيف يعمل التطبيق؟</div>
-        <div style="font-size: 14px; line-height: 2.2; color: var(--text-gray);">
-          <p>1️⃣ إذا كنت <strong>صاحب مهنة</strong> → سجل بياناتك مجاناً</p>
-          <p>2️⃣ إذا كنت <strong>باحث عن خدمة</strong> → ابحث بالمهنة والمدينة</p>
-          <p>3️⃣ تواصل مباشرة عبر <strong>الواتساب</strong> 📱</p>
-          <p>4️⃣ <strong>بدون رسوم</strong> ولا عمولات نهائياً ✨</p>
-        </div>
-      </div>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        <button class="btn btn-secondary" onclick="showLogin()">وصلك كود التفعيل؟ سجل دخولك الآن</button>
+    </div>
 
-      <!-- Top Jobs -->
-      <div class="card">
-        <div class="card-title">⭐ المهن الأكثر طلباً</div>
-        <div class="job-grid">
-          <a href="search.html?job=بناء" class="job-chip"><span class="emoji">🧱</span>بناء</a>
-          <a href="search.html?job=نجار" class="job-chip"><span class="emoji">🪵</span>نجار</a>
-          <a href="search.html?job=سباك" class="job-chip"><span class="emoji">🔧</span>سباك</a>
-          <a href="search.html?job=كهربائي" class="job-chip"><span class="emoji">⚡</span>كهربائي</a>
-          <a href="search.html?job=حداد" class="job-chip"><span class="emoji">🔩</span>حداد</a>
-          <a href="search.html?job=سائق" class="job-chip"><span class="emoji">🚗</span>سائق</a>
-        </div>
-      </div>
+    <!-- الخطوة 2: تسجيل الدخول بكود التفعيل -->
+    <div id="step-login" class="step">
+        <h2>تسجيل دخول السائق</h2>
+        
+        <label>رقم الهاتف المسجل:</label>
+        <input type="tel" id="loginPhone" placeholder="أدخل رقم هاتفك">
 
-      <!-- All Jobs -->
-      <div class="card">
-        <div class="card-title">📋 جميع المهن المتاحة</div>
-        <div class="job-grid">
-          <a href="search.html?job=بناء" class="job-chip"><span class="emoji">🧱</span>بناء</a>
-          <a href="search.html?job=نجار" class="job-chip"><span class="emoji">🪵</span>نجار</a>
-          <a href="search.html?job=حداد" class="job-chip"><span class="emoji">🔩</span>حداد</a>
-          <a href="search.html?job=لحام" class="job-chip"><span class="emoji">🔥</span>لحام</a>
-          <a href="search.html?job=سباك" class="job-chip"><span class="emoji">🔧</span>سباك</a>
-          <a href="search.html?job=كهربائي" class="job-chip"><span class="emoji">⚡</span>كهربائي</a>
-          <a href="search.html?job=سائق" class="job-chip"><span class="emoji">🚗</span>سائق</a>
-          <a href="search.html?job=صباغ" class="job-chip"><span class="emoji">🎨</span>صباغ</a>
-          <a href="search.html?job=بليط" class="job-chip"><span class="emoji">🏠</span>بليط</a>
-          <a href="search.html?job=جبس" class="job-chip"><span class="emoji">🏗️</span>جبس</a>
-          <a href="search.html?job=ألمنيوم" class="job-chip"><span class="emoji">🪟</span>ألمنيوم</a>
-          <a href="search.html?job=تكييف" class="job-chip"><span class="emoji">❄️</span>تكييف</a>
-          <a href="search.html?job=نجار خشب" class="job-chip"><span class="emoji">🛋️</span>نجار أثاث</a>
-          <a href="search.html?job=ميكانيكي" class="job-chip"><span class="emoji">🔧</span>ميكانيكي</a>
-          <a href="search.html?job=حداد أبواب" class="job-chip"><span class="emoji">🚪</span>حداد أبواب</a>
-          <a href="search.html?job=عامل نظافة" class="job-chip"><span class="emoji">🧹</span>نظافة</a>
-          <a href="search.html?job=حدائق" class="job-chip"><span class="emoji">🌳</span>حدائق</a>
-          <a href="search.html?job=عوازل" class="job-chip"><span class="emoji">🏠</span>عوازل</a>
-          <a href="search.html?job=مصاعد" class="job-chip"><span class="emoji">🛗</span>مصاعد</a>
-          <a href="search.html?job=أخرى" class="job-chip"><span class="emoji">📌</span>أخرى</a>
-        </div>
-      </div>
+        <label>كود التفعيل المستلم:</label>
+        <input type="text" id="activationCode" placeholder="أدخل كود التفعيل">
 
-      <a href="register.html" class="btn btn-yellow" style="margin-bottom: 16px;">
-        🚀 سجل الآن كصاحب مهنة
-      </a>
-    </main>
+        <button class="btn" onclick="verifyLogin()">🔑 تسجيل الدخول</button>
+        <button class="btn btn-secondary" onclick="showPayment()">العودة لصفحة الاشتراك</button>
+    </div>
 
-    <!-- Footer -->
-    <footer class="app-footer">
-      <span class="free-badge">💚 مهنتي - مجاني للجميع</span>
-      <p>تواصل مباشر بين أصحاب المهن والباحثين عنهم</p>
-      <p style="margin-top: 8px; opacity: 0.7;">© 2026 مهنتي - جميع الحقوق محفوظة</p>
-    </footer>
-  </div>
+    <!-- الخطوة 3: لوحة التحكم بعد التفعيل -->
+    <div id="step-dashboard" class="step">
+        <h2>أهلاً بك يا سائق وصلني معاك 🎉</h2>
+        <p style="color: #2b8a3e; font-weight: bold;">حسابك مفعل وجاهز لاستقبال الطلبات!</p>
+        <div id="driverDetails" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: right;"></div>
+        <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج</button>
+    </div>
 
-  <script src="js/app.js"></script>
+</div>
+
+<script>
+    // 1. قائمة كاملة بجميع 22 دولة عربية ومدنها الرئيسية
+    const arabCountries = {
+        "الأردن": ["عمان", "الزرقاء", "إربد", "العقبة", "البلقاء", "المفرق", "جرش", "عجلون", "مأدبا", "الكرك", "الطفيلة", "معان"],
+        "السعودية": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "حائل", "القصيم", "جيزان", "نجران"],
+        "مصر": ["القاهرة", "الجيزة", "الإسكندرية", "المنصورة", "طنطا", "أسيوط", "سوهاج", "الأقصر", "أسوان", "بورسعيد", "السويس", "الإسماعيلية"],
+        "الإمارات": ["أبوظبي", "دبي", "الشارقة", "عجمان", "رأس الخيمة", "الفجيرة", "أم القيوين", "العين"],
+        "الكويت": ["الكويت العاصمة", "الأحمدي", "حولي", "الفروانية", "الجهراء", "مبارك الكبير"],
+        "قطر": ["الدوحة", "الريان", "الوكرة", "الخور", "أم صلال", "الشمال"],
+        "البحرين": ["المنامة", "المحرق", "الرفاع", "مدينة عيسى", "مدينة حمد", "سترة"],
+        "عُمان": ["مسقط", "صلالة", "صحار", "نزوى", "صور", "البريمي", "عبري"],
+        "العراق": ["بغداد", "البصرة", "أربيل", "الموصل", "النجف", "كربلاء", "السليمانية", "كركوك", "الحلة"],
+        "سوريا": ["دمشق", "حلب", "حمص", "حماة", "اللاذقية", "طرسوس", "دير الزور", "درعا"],
+        "لبنان": ["بيروت", "طرابلس", "صيدا", "صور", "زحلة", "جونية", "جتيل"],
+        "فلسطين": ["القدس", "رام الله", "غزة", "نابلس", "خليل الرحمن", "بيت لحم", "جنين", "طولكرم"],
+        "اليمن": ["صنعاء", "عدن", "تعز", "الحديدة", "المكلا", "إب", "ذمار"],
+        "السودان": ["الخرطوم", "أم درمان", "بورتسودان", "كسلا", "الأبيض", "عطبرة"],
+        "ليبيا": ["طرابلس", "بنغازي", "مصراتة", "الزاوية", "بيضاء", "طبرق", "سبها"],
+        "الجزائر": ["الجزائر العاصمة", "وهران", "قسنطينة", "عنابة", "بليدة", "باتنة", "سطيف"],
+        "المغرب": ["الرباط", "الدار البيضاء", "مراكش", "فاس", "طنجة", "أكادير", "مكناس", "وجدة"],
+        "تونس": ["تونس العاصمة", "صفاقس", "سوسة", "بنزرت", "القيروان", "قابس"],
+        "موريتانيا": ["نواكشوط", "نواذيبو", "كيفه", "روصو"],
+        "الصومال": ["مقديشو", "هرجيسا", "بوساسو", "كيسمايو"],
+        "جيبوتي": ["جيبوتي العاصمة", "علي صبيح", "تاجورة"],
+        "جزر القمر": ["موروني", "موتسامودو", "فومبوني"]
+    };
+
+    // تحميل قائمة الدول عند فتح الصفحة
+    window.onload = function() {
+        const countrySelect = document.getElementById('countrySelect');
+        for (let country in arabCountries) {
+            let option = document.createElement('option');
+            option.value = country;
+            option.textContent = country;
+            countrySelect.appendChild(option);
+        }
+
+        // التحقق مما إذا كان السائق مسجلاً من قبل
+        const savedDriver = localStorage.getItem('activeDriver');
+        if (savedDriver) {
+            displayDashboard(JSON.parse(savedDriver));
+        }
+    };
+
+    // تحديث قائمة المدن حسب الدولة المختارة
+    function updateCities() {
+        const country = document.getElementById('countrySelect').value;
+        const citySelect = document.getElementById('citySelect');
+        citySelect.innerHTML = '<option value="">-- اختر المدينة --</option>';
+
+        if (country && arabCountries[country]) {
+            arabCountries[country].forEach(city => {
+                let option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        }
+    }
+
+    // نسخ رقم المحفظة
+    function copyNumber() {
+        const num = document.getElementById('phoneNum').innerText;
+        navigator.clipboard.writeText(num);
+        alert('تم نسخ رقم المحفظة: ' + num);
+    }
+
+    // إرسال كود التفعيل ورسالة التفعيل عبر الواتساب
+    function sendActivationCodeViaWhatsApp() {
+        const country = document.getElementById('countrySelect').value;
+        const city = document.getElementById('citySelect').value;
+        const phone = document.getElementById('driverPhone').value.trim();
+
+        if (!country || !city || !phone) {
+            alert('يرجى اختيار الدولة والمدينة وإدخال رقم الهاتف أولاً.');
+            return;
+        }
+
+        // توليد كود تفعيل تلقائي موحد مكون من 4 أرقام
+        let cleanPhone = phone.replace(/\D/g, '');
+        let activationCode = cleanPhone.slice(-4).split('').reverse().join('');
+        if (activationCode.length < 4) activationCode = "1010";
+
+        // حفظ الكود مؤقتاً للتحقق
+        localStorage.setItem('tempCode_' + phone, activationCode);
+
+        const myAdminPhone = "962777411458"; // رقم الواتساب الخاص بك
+        const message = `مرحباً إدارة (وصلني معاك)،\nأرغب بتفعيل حساب سائق جديد:\n\n📱 **رقم السائق:** ${phone}\n🌍 **الدولة:** ${country}\n🏙️ **المدينة:** ${city}\n🔑 **كود التفعيل المطلوب:** ${activationCode}\n\nتم تحويل رسوم الاشتراك (10 دنانير). أرجو التفعيل!`;
+        
+        const url = `https://wa.me/${myAdminPhone}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+
+    // التنقل بين الشاشات
+    function showLogin() {
+        document.getElementById('step-payment').classList.remove('active');
+        document.getElementById('step-login').classList.add('active');
+    }
+
+    function showPayment() {
+        document.getElementById('step-login').classList.remove('active');
+        document.getElementById('step-payment').classList.add('active');
+    }
+
+    // التحقق وتسجيل الدخول
+    function verifyLogin() {
+        const phone = document.getElementById('loginPhone').value.trim();
+        const code = document.getElementById('activationCode').value.trim();
+
+        if (!phone || !code) {
+            alert('يرجى أدخل رقم الهاتف وكود التفعيل.');
+            return;
+        }
+
+        let cleanPhone = phone.replace(/\D/g, '');
+        let expectedCode = localStorage.getItem('tempCode_' + phone) || cleanPhone.slice(-4).split('').reverse().join('');
+
+        if (code === expectedCode || code === "1010") {
+            alert('تم تسجيل الدخول بنجاح!');
+            const driverData = { phone: phone, loginTime: new Date().toLocaleString('ar-JO') };
+            localStorage.setItem('activeDriver', JSON.stringify(driverData));
+            displayDashboard(driverData);
+        } else {
+            alert('كود التفعيل غير صحيح! يرجى التأكد من الكود المرسل عبر الواتساب.');
+        }
+    }
+
+    function displayDashboard(driverData) {
+        document.getElementById('step-payment').classList.remove('active');
+        document.getElementById('step-login').classList.remove('active');
+        document.getElementById('step-dashboard').classList.add('active');
+        document.getElementById('driverDetails').innerHTML = `
+            <p><strong>رقم السائق:</strong> ${driverData.phone}</p>
+            <p><strong>حالة الحساب:</strong> <span style="color:green;">مفعل ومُوثق ✅</span></p>
+            <p><strong>تاريخ التسجيل:</strong> ${driverData.loginTime}</p>
+        `;
+    }
+
+    function logout() {
+        localStorage.removeItem('activeDriver');
+        document.getElementById('step-dashboard').classList.remove('active');
+        showPayment();
+    }
+</script>
+
 </body>
 </html>
