@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>وصلني معاك - تفعيل الحساب وتحديد الموقع</title>
+    <title>منصة مهنتي - تفعيل حساب المهنيين والحرَفيين</title>
     <style>
         * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
+            background-color: #f0f4f8;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -25,10 +25,11 @@
             width: 100%;
             text-align: center;
         }
-        h2 { color: #333; margin-bottom: 15px; }
+        h2 { color: #1e3a8a; margin-bottom: 10px; }
+        p.subtitle { color: #64748b; font-size: 14px; margin-bottom: 20px; }
         .payment-box {
-            background-color: #fff3eb;
-            border: 2px dashed #ff6600;
+            background-color: #fef3c7;
+            border: 2px dashed #d97706;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -36,12 +37,12 @@
         .orange-number {
             font-size: 22px;
             font-weight: bold;
-            color: #ff6600;
+            color: #d97706;
             margin: 8px 0;
             letter-spacing: 1px;
         }
         .btn {
-            background-color: #ff6600;
+            background-color: #1e3a8a;
             color: white;
             border: none;
             padding: 12px 20px;
@@ -53,16 +54,16 @@
             margin-top: 10px;
             transition: 0.3s;
         }
-        .btn:hover { background-color: #e05500; }
+        .btn:hover { background-color: #1d4ed8; }
         .btn-whatsapp { background-color: #25d366; }
         .btn-whatsapp:hover { background-color: #1da851; }
-        .btn-secondary { background-color: #6c757d; }
-        .btn-secondary:hover { background-color: #5a6268; }
+        .btn-secondary { background-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
         input, select {
             width: 100%;
             padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
+            margin: 6px 0 12px 0;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 14px;
             background-color: #fff;
@@ -72,13 +73,13 @@
             text-align: right;
             font-weight: bold;
             font-size: 14px;
-            margin-top: 10px;
+            color: #334155;
         }
         .step { display: none; }
         .step.active { display: block; }
         .alert-info {
-            background-color: #e7f5ff;
-            color: #1c7ed6;
+            background-color: #e0f2fe;
+            color: #0369a1;
             padding: 10px;
             border-radius: 6px;
             font-size: 13px;
@@ -91,18 +92,21 @@
 
 <div class="container">
     
-    <!-- الخطوة 1: الدفع وإرسال كود التفعيل -->
+    <!-- الخطوة 1: الدفع وإرسال بيانات المهني -->
     <div id="step-payment" class="step active">
-        <h2>تفعيل اشتراك السائق</h2>
-        <p style="color: #555;">رسوم الاشتراك: <strong>10 دنانير أردنية</strong> (أو ما يعادلها)</p>
+        <h2>🛠️ منصة مهنتي</h2>
+        <p class="subtitle">تفعيل حساب المهنيين والحرَفيين وإدراج الخدمات</p>
         
         <div class="payment-box">
-            <p style="margin:0; font-size:14px;">محفظة تحويل الاشتراك (<strong>Orange Money</strong>):</p>
+            <p style="margin:0; font-size:14px; color: #92400e;">رسوم الاشتراك والتفعيل: <strong>10 دنانير</strong></p>
+            <p style="margin:5px 0 0 0; font-size:13px;">محفظة تحويل الاشتراك (<strong>Orange Money</strong>):</p>
             <div class="orange-number" id="phoneNum">0777411458</div>
-            <button class="btn" style="padding: 6px 12px; font-size: 13px; width: auto;" onclick="copyNumber()">📋 نسخ الرقم</button>
+            <button class="btn" style="padding: 5px 12px; font-size: 12px; width: auto; background-color: #d97706;" onclick="copyNumber()">📋 نسخ الرقم</button>
         </div>
 
-        <!-- اختيار الدولة والمدينة -->
+        <label>المهنة / التخصص:</label>
+        <input type="text" id="jobTitle" placeholder="مثال: سباك، كهربائي، نجار، دهان...">
+
         <label>اختر الدولة:</label>
         <select id="countrySelect" onchange="updateCities()">
             <option value="">-- اختر الدولة --</option>
@@ -113,27 +117,28 @@
             <option value="">-- اختر المدينة --</option>
         </select>
 
-        <label>رقم هاتف السائق (مع رمز الدولة):</label>
-        <input type="tel" id="driverPhone" placeholder="مثال: 962791234567">
+        <label>رقم هاتف المهني (مع رمز الدولة):</label>
+        <input type="tel" id="craftsmanPhone" placeholder="مثال: 962791234567">
 
-        <button class="btn btn-whatsapp" onclick="sendActivationCodeViaWhatsApp()">📲 إرسال كود التفعيل عبر الواتساب</button>
+        <button class="btn btn-whatsapp" onclick="sendWhatsAppInfo()">📲 طلب كود التفعيل عبر الواتساب</button>
 
         <div class="alert-info">
-            💡 <strong>كيف تصلك الأكواد؟</strong> عند الضغط أعلاه، سيفتح الواتساب لإرسال طلب التفعيل والكود المولد إلى الإدارة فوراً لتأكيده لك بعد التحويل.
+            💡 عند الضغط أعلاه، سيتم توجيهك للواتساب لإرسال طلب الاشتراك مع كود التفعيل المولد تلقائياً للإدارة لتأكيده لك بعد تحويل المبلغ.
         </div>
 
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e2e8f0;">
         <button class="btn btn-secondary" onclick="showLogin()">وصلك كود التفعيل؟ سجل دخولك الآن</button>
     </div>
 
     <!-- الخطوة 2: تسجيل الدخول بكود التفعيل -->
     <div id="step-login" class="step">
-        <h2>تسجيل دخول السائق</h2>
+        <h2>تسجيل دخول المهني</h2>
+        <p class="subtitle">أدخل رقم الهاتف وكود التفعيل الخاص بك</p>
         
         <label>رقم الهاتف المسجل:</label>
         <input type="tel" id="loginPhone" placeholder="أدخل رقم هاتفك">
 
-        <label>كود التفعيل المستلم:</label>
+        <label>كود التفعيل:</label>
         <input type="text" id="activationCode" placeholder="أدخل كود التفعيل">
 
         <button class="btn" onclick="verifyLogin()">🔑 تسجيل الدخول</button>
@@ -142,16 +147,16 @@
 
     <!-- الخطوة 3: لوحة التحكم بعد التفعيل -->
     <div id="step-dashboard" class="step">
-        <h2>أهلاً بك يا سائق وصلني معاك 🎉</h2>
-        <p style="color: #2b8a3e; font-weight: bold;">حسابك مفعل وجاهز لاستقبال الطلبات!</p>
-        <div id="driverDetails" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: right;"></div>
+        <h2>أهلاً بك في منصة مهنتي 🛠️</h2>
+        <p style="color: #15803d; font-weight: bold;">حسابك المهني مفعل ومتاح للعملاء الآن!</p>
+        <div id="craftsmanDetails" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: right; border: 1px solid #e2e8f0;"></div>
         <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج</button>
     </div>
 
 </div>
 
 <script>
-    // 1. قائمة كاملة بجميع 22 دولة عربية ومدنها الرئيسية
+    // قائمة جميع 22 دولة عربية ومدنها
     const arabCountries = {
         "الأردن": ["عمان", "الزرقاء", "إربد", "العقبة", "البلقاء", "المفرق", "جرش", "عجلون", "مأدبا", "الكرك", "الطفيلة", "معان"],
         "السعودية": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "حائل", "القصيم", "جيزان", "نجران"],
@@ -162,22 +167,21 @@
         "البحرين": ["المنامة", "المحرق", "الرفاع", "مدينة عيسى", "مدينة حمد", "سترة"],
         "عُمان": ["مسقط", "صلالة", "صحار", "نزوى", "صور", "البريمي", "عبري"],
         "العراق": ["بغداد", "البصرة", "أربيل", "الموصل", "النجف", "كربلاء", "السليمانية", "كركوك", "الحلة"],
-        "سوريا": ["دمشق", "حلب", "حمص", "حماة", "اللاذقية", "طرسوس", "دير الزور", "درعا"],
-        "لبنان": ["بيروت", "طرابلس", "صيدا", "صور", "زحلة", "جونية", "جتيل"],
-        "فلسطين": ["القدس", "رام الله", "غزة", "نابلس", "خليل الرحمن", "بيت لحم", "جنين", "طولكرم"],
-        "اليمن": ["صنعاء", "عدن", "تعز", "الحديدة", "المكلا", "إب", "ذمار"],
-        "السودان": ["الخرطوم", "أم درمان", "بورتسودان", "كسلا", "الأبيض", "عطبرة"],
-        "ليبيا": ["طرابلس", "بنغازي", "مصراتة", "الزاوية", "بيضاء", "طبرق", "سبها"],
-        "الجزائر": ["الجزائر العاصمة", "وهران", "قسنطينة", "عنابة", "بليدة", "باتنة", "سطيف"],
-        "المغرب": ["الرباط", "الدار البيضاء", "مراكش", "فاس", "طنجة", "أكادير", "مكناس", "وجدة"],
-        "تونس": ["تونس العاصمة", "صفاقس", "سوسة", "بنزرت", "القيروان", "قابس"],
-        "موريتانيا": ["نواكشوط", "نواذيبو", "كيفه", "روصو"],
-        "الصومال": ["مقديشو", "هرجيسا", "بوساسو", "كيسمايو"],
-        "جيبوتي": ["جيبوتي العاصمة", "علي صبيح", "تاجورة"],
-        "جزر القمر": ["موروني", "موتسامودو", "فومبوني"]
+        "سوريا": ["دمشق", "حلب", "حمص", "حماة", "اللاذقية", "طرطوس", "دير الزور", "درعا"],
+        "لبنان": ["بيروت", "طرابلس", "صيدا", "صور", "زحلة", "جونية"],
+        "فلسطين": ["القدس", "رام الله", "غزة", "نابلس", "الخليل", "بيت لحم", "جنين", "طولكرم"],
+        "اليمن": ["صنعاء", "عدن", "تعز", "الحديدة", "المكلا", "إب"],
+        "السودان": ["الخرطوم", "أم درمان", "بورتسودان", "كسلا", "الأبيض"],
+        "ليبيا": ["طرابلس", "بنغازي", "مصراتة", "الزاوية", "البيضاء", "سبها"],
+        "الجزائر": ["الجزائر العاصمة", "وهران", "قسنطينة", "عنابة", "البليدة"],
+        "المغرب": ["الرباط", "الدار البيضاء", "مراكش", "فاس", "طنجة", "أكادير"],
+        "تونس": ["تونس العاصمة", "صفاقس", "سوسة", "بنزرت", "القيروان"],
+        "موريتانيا": ["نواكشوط", "نواذيبو", "كيفه"],
+        "الصومال": ["مقديشو", "هرجيسا", "بوساسو"],
+        "جيبوتي": ["جيبوتي العاصمة", "علي صبيح"],
+        "جزر القمر": ["موروني", "موتسامودو"]
     };
 
-    // تحميل قائمة الدول عند فتح الصفحة
     window.onload = function() {
         const countrySelect = document.getElementById('countrySelect');
         for (let country in arabCountries) {
@@ -187,14 +191,12 @@
             countrySelect.appendChild(option);
         }
 
-        // التحقق مما إذا كان السائق مسجلاً من قبل
-        const savedDriver = localStorage.getItem('activeDriver');
-        if (savedDriver) {
-            displayDashboard(JSON.parse(savedDriver));
+        const savedUser = localStorage.getItem('mahantiUser');
+        if (savedUser) {
+            displayDashboard(JSON.parse(savedUser));
         }
     };
 
-    // تحديث قائمة المدن حسب الدولة المختارة
     function updateCities() {
         const country = document.getElementById('countrySelect').value;
         const citySelect = document.getElementById('citySelect');
@@ -210,40 +212,36 @@
         }
     }
 
-    // نسخ رقم المحفظة
     function copyNumber() {
         const num = document.getElementById('phoneNum').innerText;
         navigator.clipboard.writeText(num);
         alert('تم نسخ رقم المحفظة: ' + num);
     }
 
-    // إرسال كود التفعيل ورسالة التفعيل عبر الواتساب
-    function sendActivationCodeViaWhatsApp() {
+    function sendWhatsAppInfo() {
+        const job = document.getElementById('jobTitle').value.trim();
         const country = document.getElementById('countrySelect').value;
         const city = document.getElementById('citySelect').value;
-        const phone = document.getElementById('driverPhone').value.trim();
+        const phone = document.getElementById('craftsmanPhone').value.trim();
 
-        if (!country || !city || !phone) {
-            alert('يرجى اختيار الدولة والمدينة وإدخال رقم الهاتف أولاً.');
+        if (!job || !country || !city || !phone) {
+            alert('يرجى ملء كافة الحقول (المهنة، الدولة، المدينة، ورقم الهاتف).');
             return;
         }
 
-        // توليد كود تفعيل تلقائي موحد مكون من 4 أرقام
         let cleanPhone = phone.replace(/\D/g, '');
         let activationCode = cleanPhone.slice(-4).split('').reverse().join('');
-        if (activationCode.length < 4) activationCode = "1010";
+        if (activationCode.length < 4) activationCode = "2020";
 
-        // حفظ الكود مؤقتاً للتحقق
-        localStorage.setItem('tempCode_' + phone, activationCode);
+        localStorage.setItem('mahantiCode_' + phone, activationCode);
 
-        const myAdminPhone = "962777411458"; // رقم الواتساب الخاص بك
-        const message = `مرحباً إدارة (وصلني معاك)،\nأرغب بتفعيل حساب سائق جديد:\n\n📱 **رقم السائق:** ${phone}\n🌍 **الدولة:** ${country}\n🏙️ **المدينة:** ${city}\n🔑 **كود التفعيل المطلوب:** ${activationCode}\n\nتم تحويل رسوم الاشتراك (10 دنانير). أرجو التفعيل!`;
+        const myAdminPhone = "962777411458";
+        const message = `مرحباً إدارة (منصة مهنتي)،\nأرغب بتفعيل حساب مهني جديد:\n\n🛠️ **المهنة:** ${job}\n📱 **رقم الهاتف:** ${phone}\n🌍 **الدولة:** ${country}\n🏙️ **المدينة:** ${city}\n🔑 **كود التفعيل:** ${activationCode}\n\nتم تحويل مبلغ الاشتراك (10 دنانير). أرجو التفعيل!`;
         
         const url = `https://wa.me/${myAdminPhone}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
     }
 
-    // التنقل بين الشاشات
     function showLogin() {
         document.getElementById('step-payment').classList.remove('active');
         document.getElementById('step-login').classList.add('active');
@@ -254,42 +252,41 @@
         document.getElementById('step-payment').classList.add('active');
     }
 
-    // التحقق وتسجيل الدخول
     function verifyLogin() {
         const phone = document.getElementById('loginPhone').value.trim();
         const code = document.getElementById('activationCode').value.trim();
 
         if (!phone || !code) {
-            alert('يرجى أدخل رقم الهاتف وكود التفعيل.');
+            alert('يرجى إدخال رقم الهاتف وكود التفعيل.');
             return;
         }
 
         let cleanPhone = phone.replace(/\D/g, '');
-        let expectedCode = localStorage.getItem('tempCode_' + phone) || cleanPhone.slice(-4).split('').reverse().join('');
+        let expectedCode = localStorage.getItem('mahantiCode_' + phone) || cleanPhone.slice(-4).split('').reverse().join('');
 
-        if (code === expectedCode || code === "1010") {
-            alert('تم تسجيل الدخول بنجاح!');
-            const driverData = { phone: phone, loginTime: new Date().toLocaleString('ar-JO') };
-            localStorage.setItem('activeDriver', JSON.stringify(driverData));
-            displayDashboard(driverData);
+        if (code === expectedCode || code === "2020") {
+            alert('تم تسجيل الدخول بنجاح في منصة مهنتي!');
+            const userData = { phone: phone, loginTime: new Date().toLocaleString('ar-JO') };
+            localStorage.setItem('mahantiUser', JSON.stringify(userData));
+            displayDashboard(userData);
         } else {
-            alert('كود التفعيل غير صحيح! يرجى التأكد من الكود المرسل عبر الواتساب.');
+            alert('كود التفعيل غير صحيح! يرجى التأكد من الكود المخصص لك.');
         }
     }
 
-    function displayDashboard(driverData) {
+    function displayDashboard(userData) {
         document.getElementById('step-payment').classList.remove('active');
         document.getElementById('step-login').classList.remove('active');
         document.getElementById('step-dashboard').classList.add('active');
-        document.getElementById('driverDetails').innerHTML = `
-            <p><strong>رقم السائق:</strong> ${driverData.phone}</p>
-            <p><strong>حالة الحساب:</strong> <span style="color:green;">مفعل ومُوثق ✅</span></p>
-            <p><strong>تاريخ التسجيل:</strong> ${driverData.loginTime}</p>
+        document.getElementById('craftsmanDetails').innerHTML = `
+            <p><strong>رقم المهني:</strong> ${userData.phone}</p>
+            <p><strong>حالة الحساب:</strong> <span style="color:green;">نشط ومفعل ✅</span></p>
+            <p><strong>تاريخ التسجيل:</strong> ${userData.loginTime}</p>
         `;
     }
 
     function logout() {
-        localStorage.removeItem('activeDriver');
+        localStorage.removeItem('mahantiUser');
         document.getElementById('step-dashboard').classList.remove('active');
         showPayment();
     }
