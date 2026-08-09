@@ -3,14 +3,26 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const admin = require('firebase-admin');
+// 1. التهيئة الذكية والاتصال بـ Firebase Firestore
+let serviceAccount;
 
-// 1. التهيئة والاتصال بـ Firebase Firestore
-const serviceAccount = require('./serviceAccountKey.json');
+try {
+  // محاولة القراءة من الملف المحلي (على جهازك)
+  serviceAccount = require('./serviceAccountKey.json');
+} catch (e) {
+  // إذا لم يتوفر الملف (كما في Render)، يتم استخدام متغير البيئة
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  } else {
+    console.error("⚠️ لم يتم العثور على مفاتيح الاتصال بـ Firebase!");
+  }
+}
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
+if (serviceAccount) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
 const db = admin.firestore();
 
 const app = express();
