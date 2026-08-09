@@ -43,10 +43,10 @@
                         <label class="form-label">الدولة <span style="color:red">*</span></label>
                         <select class="form-select" id="countrySelect" onchange="onCountryChange()" required>
                             <option value="">اختر الدولة</option>
-                            <option value="JO" data-code="+962" data-placeholder="07XXXXXXXX">🇯🇴 الأردن</option>
-                            <option value="SA" data-code="+966" data-placeholder="05XXXXXXXX">🇸🇦 السعودية</option>
-                            <option value="EG" data-code="+20" data-placeholder="01XXXXXXXXX">🇪🇬 مصر</option>
-                            <option value="AE" data-code="+971" data-placeholder="05XXXXXXXX">🇦🇪 الإمارات</option>
+                            <option value="JO">🇯🇴 الأردن</option>
+                            <option value="SA">🇸🇦 السعودية</option>
+                            <option value="EG">🇪🇬 مصر</option>
+                            <option value="AE">🇦🇪 الإمارات</option>
                         </select>
                     </div>
 
@@ -77,7 +77,7 @@
                         </select>
                     </div>
 
-                    <!-- المدينة (تتحدث تلقائياً حسب الدولة) -->
+                    <!-- المدينة -->
                     <div class="form-group">
                         <label class="form-label">المدينة <span style="color:red">*</span></label>
                         <select class="form-select" id="citySelect" required>
@@ -109,7 +109,7 @@
                         <textarea class="form-input" id="workerDesc" rows="3" placeholder="اكتب نبذة عن خبراتك وخدماتك..."></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
                         إرسال وإتمام التسجيل 🚀
                     </button>
                 </form>
@@ -123,29 +123,12 @@
         </footer>
     </div>
 
-    <!-- Script لتحديث المدن ومفتاح الهاتف تلقائياً -->
     <script>
         const countryData = {
-            JO: {
-                code: "+962",
-                placeholder: "07XXXXXXXX",
-                cities: ["عمان", "إربد", "الزرقاء", "العقبة", "السلط", "المفرق", "جرش", "مأدبا"]
-            },
-            SA: {
-                code: "+966",
-                placeholder: "05XXXXXXXX",
-                cities: ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "بريدة", "الطائف", "حائل"]
-            },
-            EG: {
-                code: "+20",
-                placeholder: "01XXXXXXXXX",
-                cities: ["القاهرة", "الإسكندرية", "الجيزة", "المنصورة", "طنطا"]
-            },
-            AE: {
-                code: "+971",
-                placeholder: "05XXXXXXXX",
-                cities: ["دبي", "أبوظبي", "الشارقة", "عجمان"]
-            }
+            JO: { code: "+962", placeholder: "07XXXXXXXX", cities: ["عمان", "إربد", "الزرقاء", "العقبة", "السلط", "المفرق", "جرش", "مأدبا"] },
+            SA: { code: "+966", placeholder: "05XXXXXXXX", cities: ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "بريدة", "الطائف", "حائل"] },
+            EG: { code: "+20", placeholder: "01XXXXXXXXX", cities: ["القاهرة", "الإسكندرية", "الجيزة", "المنصورة", "طنطا"] },
+            AE: { code: "+971", placeholder: "05XXXXXXXX", cities: ["دبي", "أبوظبي", "الشارقة", "عجمان"] }
         };
 
         function onCountryChange() {
@@ -159,12 +142,9 @@
 
             if (selectedCountry && countryData[selectedCountry]) {
                 const data = countryData[selectedCountry];
-                
-                // تحديث كود البلد وخانة الجوال
                 phoneCode.textContent = data.code;
                 phoneInput.placeholder = data.placeholder;
 
-                // تحديث خيارات المدن
                 data.cities.forEach(city => {
                     const option = document.createElement('option');
                     option.value = city;
@@ -177,9 +157,45 @@
             }
         }
 
-        function handleRegister(e) {
+        // دالة التسجيل وإرسال البيانات إلى السيرفر مباشرة
+        async function handleRegister(e) {
             e.preventDefault();
-            alert("تم إرسال طلب التسجيل بنجاح!");
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري الحفظ... ⏳';
+
+            const workerData = {
+                name: document.getElementById('workerName').value,
+                country: document.getElementById('countrySelect').value,
+                phone: document.getElementById('phoneCode').textContent + document.getElementById('workerPhone').value,
+                job: document.getElementById('workerJob').value,
+                city: document.getElementById('citySelect').value,
+                area: document.getElementById('workerArea').value,
+                exp: document.getElementById('workerExp').value,
+                desc: document.getElementById('workerDesc').value
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(workerData)
+                });
+
+                if (response.ok) {
+                    alert('تم التسجيل بنجاح! بياناتك تُحفظ الآن في السيرفر.');
+                    window.location.href = 'search.html';
+                } else {
+                    const err = await response.json();
+                    alert('خطأ: ' + (err.error || 'تعذر إتمام التسجيل'));
+                }
+            } catch (error) {
+                console.error(error);
+                alert('فشل الاتصال بالسيرفر. يرجى المحاولة لاحقاً.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'إرسال وإتمام التسجيل 🚀';
+            }
         }
     </script>
     <script src="js/app.js"></script>
