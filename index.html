@@ -29,7 +29,6 @@
         h2 { color: #1e3a8a; margin-bottom: 10px; }
         p.subtitle { color: #64748b; font-size: 14px; margin-bottom: 20px; }
         
-        /* التبويبات العلويّة */
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -85,7 +84,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* بطاقات العمال في نتائج البحث */
         .worker-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -123,7 +121,6 @@
             font-weight: bold;
         }
         
-        /* الواجهة الخضراء المكتملة */
         .dashboard-active {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white;
@@ -176,19 +173,38 @@
         </select>
 
         <label>اختر المهنة المطلوب البحث عنها:</label>
-        <select id="searchJob">
+        <select id="searchJob" onchange="toggleOtherJobInput('searchJob', 'searchOtherJobContainer')">
             <option value="">-- جميع المهن --</option>
-            <option value="سباك">سباك</option>
+            <option value="سباك">سباك / صحي</option>
             <option value="كهربائي">كهربائي</option>
             <option value="نجار">نجار</option>
-            <option value="دهان">دهان</option>
-            <option value="فني تكييف">فني تكييف</option>
-            <option value="عامل بناء">عامل بناء</option>
+            <option value="دهان">دهان / نقاش</option>
+            <option value="فني تكييف">فني تكييف وتبريد</option>
+            <option value="عامل بناء">عامل بناء / بنّاء</option>
+            <option value="مبلط">مبلط / سيراميك</option>
+            <option value="حداد">حداد</option>
+            <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
+            <option value="جبس بورد">فني ديكور / جبس بورد</option>
+            <option value="مصلح أجهزة">مصلح أدوات منزلية وأجهزة</option>
+            <option value="ميكانيكي">ميكانيكي سيارات</option>
+            <option value="كهربائي سيارات">كهربائي سيارات</option>
+            <option value="بنشري">بنشري / إطارات</option>
+            <option value="سائق">سائق / توصيل</option>
+            <option value="مزارع">مزارع / تنسيق حدائق</option>
+            <option value="عامل نظافة">عامل / عاملة نظافة</option>
+            <option value="خياط">خياط / تنجيد</option>
+            <option value="طباخ">طباخ / صانع حلويات</option>
+            <option value="حلاق">حلاق / كوافير</option>
+            <option value="أخرى">أخرى (أدخل المهنة)</option>
         </select>
+
+        <div id="searchOtherJobContainer" style="display: none;">
+            <label>اكتب المهنة:</label>
+            <input type="text" id="searchOtherJobText" placeholder="أدخل اسم المهنة المطلوبة...">
+        </div>
 
         <button class="btn" onclick="performSearch()">🔍 بحث عن العمال المتاحين</button>
 
-        <!-- منطقة عرض نتائج البحث -->
         <div id="searchResults" style="margin-top: 15px;"></div>
     </div>
 
@@ -197,8 +213,36 @@
         <h2>🛠️ تسجيل دخول مهني</h2>
         <p class="subtitle">سجل دخولك المباشر لتظهر في قائمة البحث للعملاء</p>
 
-        <label>المهنة / التخصص:</label>
-        <input type="text" id="jobTitle" placeholder="مثال: سباك، كهربائي...">
+        <label>اختر المهنة / التخصص:</label>
+        <select id="jobSelect" onchange="toggleOtherJobInput('jobSelect', 'loginOtherJobContainer')">
+            <option value="">-- اختر المهنة --</option>
+            <option value="سباك">سباك / صحي</option>
+            <option value="كهربائي">كهربائي</option>
+            <option value="نجار">نجار</option>
+            <option value="دهان">دهان / نقاش</option>
+            <option value="فني تكييف">فني تكييف وتبريد</option>
+            <option value="عامل بناء">عامل بناء / بنّاء</option>
+            <option value="مبلط">مبلط / سيراميك</option>
+            <option value="حداد">حداد</option>
+            <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
+            <option value="جبس بورد">فني ديكور / جبس بورد</option>
+            <option value="مصلح أجهزة">مصلح أدوات منزلية وأجهزة</option>
+            <option value="ميكانيكي">ميكانيكي سيارات</option>
+            <option value="كهربائي سيارات">كهربائي سيارات</option>
+            <option value="بنشري">بنشري / إطارات</option>
+            <option value="سائق">سائق / توصيل</option>
+            <option value="مزارع">مزارع / تنسيق حدائق</option>
+            <option value="عامل نظافة">عامل / عاملة نظافة</option>
+            <option value="خياط">خياط / تنجيد</option>
+            <option value="طباخ">طباخ / صانع حلويات</option>
+            <option value="حلاق">حلاق / كوافير</option>
+            <option value="أخرى">أخرى (أدخل المهنة)</option>
+        </select>
+
+        <div id="loginOtherJobContainer" style="display: none;">
+            <label>اكتب مهنتك:</label>
+            <input type="text" id="loginOtherJobText" placeholder="أدخل اسم مهنتك...">
+        </div>
 
         <label>اختر الدولة:</label>
         <select id="countrySelect" onchange="updateCities()">
@@ -269,7 +313,6 @@
         "جزر القمر": ["موروني"]
     };
 
-    // عمال افتراضيين للعرض والتجربة
     const dummyWorkers = [
         { name: "أحمد العلي", job: "سباك", country: "الأردن", city: "العقبة", phone: "0777411458" },
         { name: "محمد حسن", job: "كهربائي", country: "الأردن", city: "عمان", phone: "0791234567" },
@@ -320,7 +363,17 @@
         }
     }
 
-    // التنقل بين التبويبات
+    // إظهار وإخفاء حقل المهن الأخرى عند اختيار "أخرى"
+    function toggleOtherJobInput(selectId, containerId) {
+        const selectVal = document.getElementById(selectId).value;
+        const container = document.getElementById(containerId);
+        if (selectVal === 'أخرى') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
     function switchTab(tabName) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -334,13 +387,15 @@
         }
     }
 
-    // إجراء عملية البحث عن العمال
     function performSearch() {
         const country = document.getElementById('searchCountry').value;
         const city = document.getElementById('searchCity').value;
-        const job = document.getElementById('searchJob').value;
-        const resultsDiv = document.getElementById('searchResults');
+        let job = document.getElementById('searchJob').value;
+        if (job === 'أخرى') {
+            job = document.getElementById('searchOtherJobText').value.trim();
+        }
 
+        const resultsDiv = document.getElementById('searchResults');
         resultsDiv.innerHTML = '';
 
         if (!country) {
@@ -348,7 +403,6 @@
             return;
         }
 
-        // جلب المهني المسجل محلياً إن وجد
         let allWorkers = [...dummyWorkers];
         const savedUser = localStorage.getItem('mahantiDirectUser');
         if (savedUser) {
@@ -362,11 +416,10 @@
             });
         }
 
-        // تصفية العمال بناءً على خيارات البحث
         const filtered = allWorkers.filter(w => {
             const matchCountry = w.country === country;
             const matchCity = !city || w.city === city;
-            const matchJob = !job || w.job.includes(job);
+            const matchJob = !job || w.job.toLowerCase().includes(job.toLowerCase());
             return matchCountry && matchCity && matchJob;
         });
 
@@ -393,7 +446,11 @@
     }
 
     function directLogin() {
-        const job = document.getElementById('jobTitle').value.trim();
+        let job = document.getElementById('jobSelect').value;
+        if (job === 'أخرى') {
+            job = document.getElementById('loginOtherJobText').value.trim();
+        }
+
         const country = document.getElementById('countrySelect').value;
         const city = document.getElementById('citySelect').value;
         const phone = document.getElementById('craftsmanPhone').value.trim();
