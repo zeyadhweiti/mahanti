@@ -21,9 +21,10 @@
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 450px;
+            max-width: 480px;
             width: 100%;
             text-align: center;
+            transition: all 0.3s ease;
         }
         h2 { color: #1e3a8a; margin-bottom: 10px; }
         p.subtitle { color: #64748b; font-size: 14px; margin-bottom: 20px; }
@@ -77,20 +78,53 @@
         }
         .step { display: none; }
         .step.active { display: block; }
-        .alert-info {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            margin-top: 15px;
+        
+        /* تصميم اللوحة الخضراء للمضي قدماً بعد التفعيل */
+        .dashboard-active {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        .dashboard-active h2 { color: #ffffff; }
+        .dashboard-active label { color: #e6f4ea; }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
             text-align: right;
+            font-size: 14px;
+        }
+        .btn-light {
+            background-color: #ffffff;
+            color: #047857;
+            font-weight: bold;
+        }
+        .btn-light:hover { background-color: #f0fdf4; }
+        .btn-danger-light {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .btn-danger-light:hover { background-color: rgba(239, 68, 68, 0.4); }
+        .status-badge {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="mainContainer">
     
     <!-- الواجهة الأولى: الدفع وطلب كود التفعيل عبر SMS -->
     <div id="step-payment" class="step active">
@@ -122,10 +156,6 @@
 
         <button class="btn btn-sms" onclick="sendSMSInfo()">💬 أرسل كود التفعيل عبر SMS</button>
 
-        <div class="alert-info">
-            💡 سيتم فتح تطبيق الرسائل (SMS) على هاتفك تلقائياً لإرسال كود التفعيل المولد ورقمك للإدارة لتأكيد الحساب.
-        </div>
-
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e2e8f0;">
         <button class="btn btn-secondary" onclick="showLogin()">وصلك كود التفعيل؟ سجل دخولك الآن</button>
     </div>
@@ -145,18 +175,49 @@
         <button class="btn btn-secondary" onclick="showPayment()">العودة لصفحة الاشتراك</button>
     </div>
 
-    <!-- الواجهة الثالثة: لوحة التحكم بعد التفعيل -->
+    <!-- الواجهة الثالثة: لوحة التحكم الخضراء الكاملة بمميزات مهنتي -->
     <div id="step-dashboard" class="step">
-        <h2>أهلاً بك في منصة مهنتي 🛠️</h2>
-        <p style="color: #15803d; font-weight: bold;">حسابك المهني مفعل ومتاح للعملاء الآن!</p>
-        <div id="craftsmanDetails" style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: right; border: 1px solid #e2e8f0;"></div>
-        <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج</button>
+        <h2>🛠️ منصة مهنتي - لوحة التحكم</h2>
+        <div style="margin-bottom: 15px;">
+            <span class="status-badge">🟢 الحساب نشط ومفعل بالكامل</span>
+        </div>
+
+        <div class="feature-card">
+            <strong>📱 رقم المهني:</strong> <span id="dashPhone"></span>
+        </div>
+
+        <div class="feature-card">
+            <strong>📍 حالة التواجد والعمل:</strong>
+            <select id="workStatus" style="margin-top:5px; color:#333;" onchange="toggleWorkStatus()">
+                <option value="active">🟢 متاح لاستقبال الطلبات الآن</option>
+                <option value="busy">🔴 مشغول حالياً</option>
+            </select>
+        </div>
+
+        <!-- مميزات منصة مهنتي الأصلية -->
+        <div style="text-align: right; margin-top: 15px;">
+            <h4 style="margin-bottom: 8px; color: #f0fdf4;">✨ مميزات حسابك المفعل:</h4>
+            
+            <div class="feature-card">
+                📥 <strong>الطلبات المباشرة:</strong> حسابك جاهز لاستقبال اتصالات وطلبات الصيانة الفورية من العملاء في مدينتك.
+            </div>
+
+            <div class="feature-card">
+                🗺️ <strong>الظهور على الخريطة:</strong> تم إدراج موقعك لتكون ضمن نتائج البحث الأولى للعملاء القريبين منك.
+            </div>
+
+            <div class="feature-card">
+                ⭐ <strong>تقييمات العملاء:</strong> يمكنك الآن جمع تقييمات وآراء العملاء للرفع من موثوقية عملك.
+            </div>
+        </div>
+
+        <button class="btn btn-light" onclick="alert('جاري تحديث قائمة الطلبات القريبة...')">🔄 تحديث قائمة الطلبات</button>
+        <button class="btn btn-danger-light" onclick="logout()">تسجيل الخروج</button>
     </div>
 
 </div>
 
 <script>
-    // قائمة الدول العربية ومدنها
     const arabCountries = {
         "الأردن": ["عمان", "الزرقاء", "إربد", "العقبة", "البلقاء", "المفرق", "جرش", "عجلون", "مأدبا", "الكرك", "الطفيلة", "معان"],
         "السعودية": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "حائل", "القصيم"],
@@ -218,7 +279,6 @@
         alert('تم نسخ رقم المحفظة: ' + num);
     }
 
-    // إرسال كود التفعيل عبر رسالة SMS تلقائياً
     function sendSMSInfo() {
         const job = document.getElementById('jobTitle').value.trim();
         const country = document.getElementById('countrySelect').value;
@@ -239,7 +299,6 @@
         const targetAdminPhone = "0777411458";
         const smsMessage = `تفعيل مهنتي:\nالمهنة: ${job}\nالهاتف: ${phone}\nالدولة: ${country}\nالمدينة: ${city}\nكود التفعيل: ${activationCode}`;
         
-        // فتح تطبيق الرسائل القصيرة SMS للرقم المستهدف
         window.location.href = `sms:${targetAdminPhone}?body=${encodeURIComponent(smsMessage)}`;
     }
 
@@ -250,7 +309,9 @@
 
     function showPayment() {
         document.getElementById('step-login').classList.remove('active');
+        document.getElementById('step-dashboard').classList.remove('active');
         document.getElementById('step-payment').classList.add('active');
+        document.getElementById('mainContainer').classList.remove('dashboard-active');
     }
 
     function verifyLogin() {
@@ -279,16 +340,23 @@
         document.getElementById('step-payment').classList.remove('active');
         document.getElementById('step-login').classList.remove('active');
         document.getElementById('step-dashboard').classList.add('active');
-        document.getElementById('craftsmanDetails').innerHTML = `
-            <p><strong>رقم المهني:</strong> ${userData.phone}</p>
-            <p><strong>حالة الحساب:</strong> <span style="color:green;">نشط ومفعل ✅</span></p>
-            <p><strong>تاريخ التسجيل:</strong> ${userData.loginTime}</p>
-        `;
+        
+        // تحويل الخلفية والتصميم إلى اللون الأخضر بالكامل
+        document.getElementById('mainContainer').classList.add('dashboard-active');
+        document.getElementById('dashPhone').innerText = userData.phone;
+    }
+
+    function toggleWorkStatus() {
+        const status = document.getElementById('workStatus').value;
+        if(status === 'active') {
+            alert('أنت الآن متاح للعمل واستقبال الطلبات.');
+        } else {
+            alert('تم إيقاف استقبال الطلبات المؤقت.');
+        }
     }
 
     function logout() {
         localStorage.removeItem('mahantiUser');
-        document.getElementById('step-dashboard').classList.remove('active');
         showPayment();
     }
 </script>
