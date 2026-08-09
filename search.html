@@ -32,23 +32,8 @@
                 <input type="text" class="search-input" placeholder="ابحث باسم المهنة أو العامل..." id="searchInput" oninput="filterWorkers()">
             </div>
 
-            <!-- Filter Tags -->
-            <div class="filter-tags">
-                <button class="filter-tag active" onclick="filterByJob('all', this)">الكل</button>
-                <button class="filter-tag" onclick="filterByJob('بناء', this)">بناء</button>
-                <button class="filter-tag" onclick="filterByJob('نجار', this)">نجار</button>
-                <button class="filter-tag" onclick="filterByJob('حداد', this)">حداد</button>
-                <button class="filter-tag" onclick="filterByJob('لحام', this)">لحام</button>
-                <button class="filter-tag" onclick="filterByJob('سباك', this)">سباك</button>
-                <button class="filter-tag" onclick="filterByJob('كهربائي', this)">كهربائي</button>
-                <button class="filter-tag" onclick="filterByJob('سائق', this)">سائق</button>
-                <button class="filter-tag" onclick="filterByJob('صباغ', this)">صباغ</button>
-                <button class="filter-tag" onclick="filterByJob('بليط', this)">بليط</button>
-            </div>
-
-            <!-- Country & City Filters (تحديد الدولة ثم المدينة) -->
+            <!-- Country & City Filters -->
             <div class="form-group" style="display: flex; gap: 10px; margin-bottom: 16px;">
-                <!-- 1. اختيار الدولة -->
                 <select class="form-select" id="countryFilter" onchange="updateCitiesOptions()">
                     <option value="">🌍 جميع الدول</option>
                     <option value="JO">🇯🇴 الأردن</option>
@@ -57,92 +42,24 @@
                     <option value="AE">🇦🇪 الإمارات</option>
                 </select>
 
-                <!-- 2. اختيار المدينة (تتحدث تلقائياً حسب الدولة) -->
                 <select class="form-select" id="cityFilter" onchange="filterWorkers()">
                     <option value="">📍 جميع المدن</option>
                 </select>
             </div>
 
-            <!-- Workers List -->
+            <!-- Workers List Container -->
             <div id="workersList">
-                <!-- Worker 1 -->
-                <div class="worker-card" data-job="بناء" data-city="عمان" data-country="JO">
-                    <div class="worker-header">
-                        <div class="worker-name">أحمد محمد العلي</div>
-                        <div class="worker-job">بناء</div>
-                    </div>
-                    <div class="worker-info">
-                        <span>📍 الأردن - عمان (خلدا)</span><br>
-                        <span>⭐ 5 سنوات خبرة</span><br>
-                        <span>📝 بناء طوب وقصارة وتشطيب</span>
-                    </div>
-                    <div class="worker-actions">
-                        <a href="https://wa.me/962790000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-                        <a href="tel:0790000000" class="btn btn-call">📞 اتصال</a>
-                    </div>
-                </div>
+                <div id="loading" style="text-align: center; padding: 20px;">جاري تحميل العمال... ⏳</div>
+            </div>
 
-                <!-- Worker 2 -->
-                <div class="worker-card" data-job="نجار" data-city="إربد" data-country="JO">
-                    <div class="worker-header">
-                        <div class="worker-name">خالد عبدالرحمن</div>
-                        <div class="worker-job">نجار</div>
-                    </div>
-                    <div class="worker-info">
-                        <span>📍 الأردن - إربد (شارع الجامعة)</span><br>
-                        <span>⭐ 12 سنة خبرة</span><br>
-                        <span>📝 نجارة أبواب وشبابيك ودواليب</span>
-                    </div>
-                    <div class="worker-actions">
-                        <a href="https://wa.me/962780000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-                        <a href="tel:0780000000" class="btn btn-call">📞 اتصال</a>
-                    </div>
-                </div>
-
-                <!-- Worker 3 -->
-                <div class="worker-card" data-job="حداد" data-city="الرياض" data-country="SA">
-                    <div class="worker-header">
-                        <div class="worker-name">سلطان المطيري</div>
-                        <div class="worker-job">حداد</div>
-                    </div>
-                    <div class="worker-info">
-                        <span>📍 السعودية - الرياض (حي النسيم)</span><br>
-                        <span>⭐ 8 سنوات خبرة</span><br>
-                        <span>📝 حدادة أبواب حديد وشبابيك ودرابزين</span>
-                    </div>
-                    <div class="worker-actions">
-                        <a href="https://wa.me/966555345678" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-                        <a href="tel:0555345678" class="btn btn-call">📞 اتصال</a>
-                    </div>
-                </div>
-
-                <!-- Worker 4 -->
-                <div class="worker-card" data-job="سباك" data-city="القاهرة" data-country="EG">
-                    <div class="worker-header">
-                        <div class="worker-name">محمود السيد</div>
-                        <div class="worker-job">سباك</div>
-                    </div>
-                    <div class="worker-info">
-                        <span>📍 مصر - القاهرة (مدينة نصر)</span><br>
-                        <span>⭐ 7 سنوات خبرة</span><br>
-                        <span>📝 سباكة مواسير وصرف صحي وتركيب أدوات صحية</span>
-                    </div>
-                    <div class="worker-actions">
-                        <a href="https://wa.me/201000000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-                        <a href="tel:01000000000" class="btn btn-call">📞 اتصال</a>
-                    </div>
-                </div>
-
-                <!-- No Results Message -->
-                <div id="noResults" style="display:none; text-align:center; padding:40px 20px; color:var(--text-gray);">
-                    <div style="font-size:48px; margin-bottom:12px;">😕</div>
-                    <h3 style="color:var(--primary-green); margin-bottom:8px;">لا توجد نتائج</h3>
-                    <p>جرب البحث بكلمات مختلفة أو تصفية أقل</p>
-                </div>
+            <!-- No Results Message -->
+            <div id="noResults" style="display:none; text-align:center; padding:40px 20px; color:var(--text-gray);">
+                <div style="font-size:48px; margin-bottom:12px;">😕</div>
+                <h3 style="color:var(--primary-green); margin-bottom:8px;">لا توجد نتائج</h3>
+                <p>جرب البحث بكلمات مختلفة أو تصفية أقل</p>
             </div>
         </main>
 
-        <!-- Footer -->
         <footer class="app-footer">
             <span class="free-badge">💚 مهنتي - مجاني للجميع</span>
             <p>تواصل مباشر بين أصحاب المهن والباحثين عنهم</p>
@@ -150,46 +67,96 @@
         </footer>
     </div>
 
-    <!-- Script لتحديث المدن تلقائياً حسب الدولة والتصفية -->
     <script>
-        const citiesByCountry = {
-            JO: ["عمان", "إربد", "الزرقاء", "العقبة", "السلط", "المفرق", "جرش", "مأدبا"],
-            SA: ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "بريدة"],
-            EG: ["القاهرة", "الإسكندرية", "الجيزة", "المنصورة", "طنطا"],
-            AE: ["دبي", "أبوظبي", "الشارقة", "عجمان"]
+        const countryData = {
+            JO: { name: "الأردن", cities: ["عمان", "إربد", "الزرقاء", "العقبة", "السلط", "المفرق", "جرش", "مأدبا"] },
+            SA: { name: "السعودية", cities: ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "بريدة", "الطائف", "حائل"] },
+            EG: { name: "مصر", cities: ["القاهرة", "الإسكندرية", "الجيزة", "المنصورة", "طنطا"] },
+            AE: { name: "الإمارات", cities: ["دبي", "أبوظبي", "الشارقة", "عجمان"] }
         };
 
-        function updateCitiesOptions() {
-            const countrySelect = document.getElementById('countryFilter');
-            const citySelect = document.getElementById('cityFilter');
-            const selectedCountry = countrySelect.value;
+        let allWorkers = [];
 
+        async function fetchWorkers() {
+            try {
+                const res = await fetch('/api/workers');
+                allWorkers = await res.json();
+                renderWorkers(allWorkers);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('workersList').innerHTML = '<p style="text-align:center; color:red;">تعذر تحميل البيانات.</p>';
+            }
+        }
+
+        function renderWorkers(workers) {
+            const container = document.getElementById('workersList');
+            const noResults = document.getElementById('noResults');
+            container.innerHTML = '';
+
+            if (!workers || workers.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            }
+
+            noResults.style.display = 'none';
+
+            workers.forEach(worker => {
+                const cleanPhone = (worker.phone || '').replace('+', '');
+                const card = document.createElement('div');
+                card.className = 'worker-card';
+                card.innerHTML = `
+                    <div class="worker-header">
+                        <div class="worker-name">${worker.name}</div>
+                        <div class="worker-job">${worker.job}</div>
+                    </div>
+                    <div class="worker-info">
+                        <span>📍 ${worker.city || ''} ${worker.area ? '(- ' + worker.area + ')' : ''}</span><br>
+                        <span>⭐ ${worker.exp || 'خبرة غير محددة'}</span><br>
+                        <span>📝 ${worker.desc || 'لا يوجد وصف'}</span>
+                    </div>
+                    <div class="worker-actions">
+                        <a href="https://wa.me/${cleanPhone}" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
+                        <a href="tel:${cleanPhone}" class="btn btn-call">📞 اتصال</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateCitiesOptions() {
+            const country = document.getElementById('countryFilter').value;
+            const citySelect = document.getElementById('cityFilter');
             citySelect.innerHTML = '<option value="">📍 جميع المدن</option>';
 
-            if (selectedCountry && citiesByCountry[selectedCountry]) {
-                citiesByCountry[selectedCountry].forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    citySelect.appendChild(option);
-                });
-            } else {
-                // إذا لم يتم اختيار دولة، عرض جميع مدن كافة الدول
-                Object.values(citiesByCountry).flat().forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    citySelect.appendChild(option);
+            if (country && countryData[country]) {
+                countryData[country].cities.forEach(city => {
+                    const opt = document.createElement('option');
+                    opt.value = city;
+                    opt.textContent = city;
+                    citySelect.appendChild(opt);
                 });
             }
             filterWorkers();
         }
 
-        // إظهار كافة المدن عند أول فتح للصفحة
-        document.addEventListener("DOMContentLoaded", () => {
-            updateCitiesOptions();
+        function filterWorkers() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const selectedCountry = document.getElementById('countryFilter').value;
+            const selectedCity = document.getElementById('cityFilter').value;
+
+            const filtered = allWorkers.filter(w => {
+                const matchSearch = w.name.toLowerCase().includes(searchVal) || w.job.toLowerCase().includes(searchVal);
+                const matchCountry = !selectedCountry || w.country === selectedCountry;
+                const matchCity = !selectedCity || w.city === selectedCity;
+                return matchSearch && matchCountry && matchCity;
+            });
+
+            renderWorkers(filtered);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchWorkers();
         });
     </script>
-    <script src="js/app.js"></script>
 </body>
 </html>
