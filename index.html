@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مهنتي - تفعيل الحساب الذاتي</title>
+    <title>منصة مهنتي - الدخول المباشر</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -28,38 +28,22 @@
         }
         h2 { color: #1e3a8a; margin-bottom: 10px; }
         p.subtitle { color: #64748b; font-size: 14px; margin-bottom: 20px; }
-        .payment-box {
-            background-color: #fef3c7;
-            border: 2px dashed #d97706;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .orange-number {
-            font-size: 22px;
-            font-weight: bold;
-            color: #d97706;
-            margin: 8px 0;
-            letter-spacing: 1px;
-        }
+        
         .btn {
-            background-color: #1e3a8a;
+            background-color: #10b981;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             border-radius: 6px;
             cursor: pointer;
             width: 100%;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 15px;
             transition: 0.3s;
         }
-        .btn:hover { background-color: #1d4ed8; }
-        .btn-sms { background-color: #0284c7; }
-        .btn-sms:hover { background-color: #0369a1; }
-        .btn-secondary { background-color: #64748b; }
-        .btn-secondary:hover { background-color: #475569; }
+        .btn:hover { background-color: #059669; }
+        
         input, select {
             width: 100%;
             padding: 12px;
@@ -79,7 +63,7 @@
         .step { display: none; }
         .step.active { display: block; }
         
-        /* تصميم اللوحة الخضراء للمضي قدماً بعد التفعيل */
+        /* الواجهة الخضراء الأصلية الكاملة */
         .dashboard-active {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white;
@@ -88,7 +72,6 @@
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
         }
         .dashboard-active h2 { color: #ffffff; }
-        .dashboard-active label { color: #e6f4ea; }
         .feature-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(5px);
@@ -109,6 +92,7 @@
             background-color: rgba(239, 68, 68, 0.2);
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.4);
+            margin-top: 10px;
         }
         .btn-danger-light:hover { background-color: rgba(239, 68, 68, 0.4); }
         .status-badge {
@@ -126,17 +110,10 @@
 
 <div class="container" id="mainContainer">
     
-    <!-- الواجهة الأولى: الدفع وطلب كود التفعيل عبر SMS -->
-    <div id="step-payment" class="step active">
+    <!-- واجهة تسجيل الدخول المباشر (بدون كود تفعيل) -->
+    <div id="step-login" class="step active">
         <h2>🛠️ منصة مهنتي</h2>
-        <p class="subtitle">تفعيل حساب المهنيين والحرَفيين وإدراج الخدمات</p>
-        
-        <div class="payment-box">
-            <p style="margin:0; font-size:14px; color: #92400e;">رسوم الاشتراك والتفعيل: <strong>10 دنانير</strong></p>
-            <p style="margin:5px 0 0 0; font-size:13px;">محفظة التحويل (<strong>Orange Money</strong>):</p>
-            <div class="orange-number" id="phoneNum">0777411458</div>
-            <button class="btn" style="padding: 5px 12px; font-size: 12px; width: auto; background-color: #d97706;" onclick="copyNumber()">📋 نسخ الرقم</button>
-        </div>
+        <p class="subtitle">سجل دخولك المباشر وابدأ استقبال طلبات الصيانة</p>
 
         <label>المهنة / التخصص:</label>
         <input type="text" id="jobTitle" placeholder="مثال: سباك، كهربائي، نجار، دهان...">
@@ -154,36 +131,20 @@
         <label>رقم هاتف المهني:</label>
         <input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
 
-        <button class="btn btn-sms" onclick="sendSMSInfo()">💬 أرسل كود التفعيل عبر SMS</button>
-
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e2e8f0;">
-        <button class="btn btn-secondary" onclick="showLogin()">وصلك كود التفعيل؟ سجل دخولك الآن</button>
+        <button class="btn" onclick="directLogin()">🚀 دخول مباشر إلى منصة مهنتي</button>
     </div>
 
-    <!-- الواجهة الثانية: تسجيل الدخول بكود التفعيل -->
-    <div id="step-login" class="step">
-        <h2>تسجيل دخول المهني</h2>
-        <p class="subtitle">أدخل رقم الهاتف وكود التفعيل الخاص بك</p>
-        
-        <label>رقم الهاتف المسجل:</label>
-        <input type="tel" id="loginPhone" placeholder="أدخل رقم هاتفك">
-
-        <label>كود التفعيل المستلم:</label>
-        <input type="text" id="activationCode" placeholder="أدخل كود التفعيل">
-
-        <button class="btn" onclick="verifyLogin()">🔑 تسجيل الدخول</button>
-        <button class="btn btn-secondary" onclick="showPayment()">العودة لصفحة الاشتراك</button>
-    </div>
-
-    <!-- الواجهة الثالثة: لوحة التحكم الخضراء الكاملة بمميزات مهنتي -->
+    <!-- الواجهة الرئيسية الخضراء بعد الدخول -->
     <div id="step-dashboard" class="step">
         <h2>🛠️ منصة مهنتي - لوحة التحكم</h2>
         <div style="margin-bottom: 15px;">
-            <span class="status-badge">🟢 الحساب نشط ومفعل بالكامل</span>
+            <span class="status-badge">🟢 الحساب نشط ومتاح للعملاء</span>
         </div>
 
         <div class="feature-card">
-            <strong>📱 رقم المهني:</strong> <span id="dashPhone"></span>
+            <strong>📱 رقم المهني:</strong> <span id="dashPhone"></span><br>
+            <strong>🛠️ المهنة:</strong> <span id="dashJob"></span><br>
+            <strong>📍 الموقع:</strong> <span id="dashLocation"></span>
         </div>
 
         <div class="feature-card">
@@ -196,7 +157,7 @@
 
         <!-- مميزات منصة مهنتي الأصلية -->
         <div style="text-align: right; margin-top: 15px;">
-            <h4 style="margin-bottom: 8px; color: #f0fdf4;">✨ مميزات حسابك المفعل:</h4>
+            <h4 style="margin-bottom: 8px; color: #f0fdf4;">✨ مميزات حسابك:</h4>
             
             <div class="feature-card">
                 📥 <strong>الطلبات المباشرة:</strong> حسابك جاهز لاستقبال اتصالات وطلبات الصيانة الفورية من العملاء في مدينتك.
@@ -223,7 +184,7 @@
         "السعودية": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "حائل", "القصيم"],
         "مصر": ["القاهرة", "الجيزة", "الإسكندرية", "المنصورة", "طنطا", "أسيوط", "سوهاج", "الأقصر", "أسوان"],
         "الإمارات": ["أبوظبي", "دبي", "الشارقة", "عجمان", "رأس الخيمة", "الفجيرة", "أم القيوين"],
-        "الكويت": ["الكويت العاصمة", "الأحمدي", "حولي", "الفروانية", "الجهراء"],
+        "الكويت": ["الكويت العاصمة", "الأحمدي", "حولي", "الفروانية", "الجهة"],
         "قطر": ["الدوحة", "الريان", "الوكرة", "الخور"],
         "البحرين": ["المنامة", "المحرق", "الرفاع"],
         "عُمان": ["مسقط", "صلالة", "صحار", "نزوى"],
@@ -252,7 +213,7 @@
             countrySelect.appendChild(option);
         }
 
-        const savedUser = localStorage.getItem('mahantiUser');
+        const savedUser = localStorage.getItem('mahantiDirectUser');
         if (savedUser) {
             displayDashboard(JSON.parse(savedUser));
         }
@@ -273,77 +234,37 @@
         }
     }
 
-    function copyNumber() {
-        const num = document.getElementById('phoneNum').innerText;
-        navigator.clipboard.writeText(num);
-        alert('تم نسخ رقم المحفظة: ' + num);
-    }
-
-    function sendSMSInfo() {
+    // تسجيل الدخول المباشر بدون كود
+    function directLogin() {
         const job = document.getElementById('jobTitle').value.trim();
         const country = document.getElementById('countrySelect').value;
         const city = document.getElementById('citySelect').value;
         const phone = document.getElementById('craftsmanPhone').value.trim();
 
         if (!job || !country || !city || !phone) {
-            alert('يرجى ملء كافة الحقول أولاً.');
+            alert('يرجى ملء جميع الحقول لتسجيل الدخول.');
             return;
         }
 
-        let cleanPhone = phone.replace(/\D/g, '');
-        let activationCode = cleanPhone.slice(-4).split('').reverse().join('');
-        if (activationCode.length < 4) activationCode = "2020";
+        const userData = {
+            job: job,
+            country: country,
+            city: city,
+            phone: phone
+        };
 
-        localStorage.setItem('mahantiCode_' + phone, activationCode);
-
-        const targetAdminPhone = "0777411458";
-        const smsMessage = `تفعيل مهنتي:\nالمهنة: ${job}\nالهاتف: ${phone}\nالدولة: ${country}\nالمدينة: ${city}\nكود التفعيل: ${activationCode}`;
-        
-        window.location.href = `sms:${targetAdminPhone}?body=${encodeURIComponent(smsMessage)}`;
-    }
-
-    function showLogin() {
-        document.getElementById('step-payment').classList.remove('active');
-        document.getElementById('step-login').classList.add('active');
-    }
-
-    function showPayment() {
-        document.getElementById('step-login').classList.remove('active');
-        document.getElementById('step-dashboard').classList.remove('active');
-        document.getElementById('step-payment').classList.add('active');
-        document.getElementById('mainContainer').classList.remove('dashboard-active');
-    }
-
-    function verifyLogin() {
-        const phone = document.getElementById('loginPhone').value.trim();
-        const code = document.getElementById('activationCode').value.trim();
-
-        if (!phone || !code) {
-            alert('يرجى إدخال رقم الهاتف وكود التفعيل.');
-            return;
-        }
-
-        let cleanPhone = phone.replace(/\D/g, '');
-        let expectedCode = localStorage.getItem('mahantiCode_' + phone) || cleanPhone.slice(-4).split('').reverse().join('');
-
-        if (code === expectedCode || code === "2020") {
-            alert('تم تسجيل الدخول بنجاح!');
-            const userData = { phone: phone, loginTime: new Date().toLocaleString('ar-JO') };
-            localStorage.setItem('mahantiUser', JSON.stringify(userData));
-            displayDashboard(userData);
-        } else {
-            alert('كود التفعيل غير صحيح!');
-        }
+        localStorage.setItem('mahantiDirectUser', JSON.stringify(userData));
+        displayDashboard(userData);
     }
 
     function displayDashboard(userData) {
-        document.getElementById('step-payment').classList.remove('active');
         document.getElementById('step-login').classList.remove('active');
         document.getElementById('step-dashboard').classList.add('active');
-        
-        // تحويل الخلفية والتصميم إلى اللون الأخضر بالكامل
         document.getElementById('mainContainer').classList.add('dashboard-active');
+
         document.getElementById('dashPhone').innerText = userData.phone;
+        document.getElementById('dashJob').innerText = userData.job;
+        document.getElementById('dashLocation').innerText = `${userData.country} - ${userData.city}`;
     }
 
     function toggleWorkStatus() {
@@ -356,8 +277,10 @@
     }
 
     function logout() {
-        localStorage.removeItem('mahantiUser');
-        showPayment();
+        localStorage.removeItem('mahantiDirectUser');
+        document.getElementById('step-dashboard').classList.remove('active');
+        document.getElementById('step-login').classList.add('active');
+        document.getElementById('mainContainer').classList.remove('dashboard-active');
     }
 </script>
 
