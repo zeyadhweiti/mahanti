@@ -1,59 +1,63 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
+import express from 'express';
+import { JSONFilePreset } from 'lowdb/node';
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+// 1. تحديد البيانات الافتراضية لقاعدة البيانات
+const defaultData = { 
+  posts: [], 
+  users: [] 
+};
+
+// 2. تهيئة قاعدة البيانات lowdb مع القيمة الافتراضية
+const db = await JSONFilePreset('db.json', defaultData);
+
+// Middlewares
 app.use(express.json());
 
-// 1. خدمة جميع الملفات الثابتة من المجلد الرئيسي و public
-app.use(express.static(path.join(__dirname)));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// 2. إعداد وقراءة قاعدة البيانات المحلية db.json بأمان بدون أخطاء lowdb
-const dataDir = path.join(__dirname, 'data');
-const dbPath = path.join(dataDir, 'db.json');
-
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-}
-
-if (!fs.existsSync(dbPath)) {
-    fs.writeFileSync(dbPath, JSON.stringify({ workers: [] }, null, 2));
-}
-
-function getWorkers() {
-    try {
-        const data = fs.readFileSync(dbPath, 'utf8');
-        return JSON.parse(data).workers || [];
-    } catch (err) {
-        return [];
-    }
-}
-
-function saveWorkers(workers) {
-    fs.writeFileSync(dbPath, JSON.stringify({ workers }, null, 2));
-}
-
-// 3. مسارات الـ API
-app.get('/api/workers', (req, res) => {
-    res.json(getWorkers());
+// Routes مثال للتحقق من عمل السيرفر وقاعدة البيانات
+app.get('/', (req, res) => {
+  res.send('Server is running successfully!');
 });
 
-app.post('/api/workers', (req, res) => {
-    const workers = getWorkers();
-    const newWorker = { id: Date.now(), ...req.body };
-    workers.push(newWorker);
-    saveWorkers(workers);
-    res.status(201).json(newWorker);
+app.get('/api/data', async (req, res) => {
+  await db.read();
+  res.json(db.data);
 });
 
-// توجيه أي طلب للصفحة الرئيسية
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// 4. تشغيل السيرفر على المنفذ المطلوب من Render
-const PORT = process.env.PORT || 3000;
+// تشغيل السيرفر
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
+});
+const express = require('express');
+const { Low } = require('lowdb');
+const { JSONFile } = require('lowdb/node');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// 1. تحديد البيانات الافتراضية
+const defaultData = { 
+  posts: [], 
+  users: [] 
+};
+
+// 2. إعداد Adapter و Low مع تمرير defaultData (حل المشكلة)
+const adapter = new JSONFile('db.json');
+const db = new Low(adapter, defaultData);
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Server is running successfully!');
+});
+
+app.get('/api/data', async (req, res) => {
+  await db.read();
+  res.json(db.data);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
