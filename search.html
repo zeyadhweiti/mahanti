@@ -1,262 +1,187 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>البحث عن العمال - مهنتي</title>
-  <meta name="description" content="ابحث عن أصحاب المهن الحرفية في مدينتك">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>البحث عن العمال - مهنتي</title>
+    <meta name="description" content="ابحث عن أصحاب المهن الحرفية في مدينتك">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 </head>
 <body>
-  <div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-      <div class="logo-icon">🔍</div>
-      <div class="app-title">البحث عن العمال</div>
-      <div class="app-subtitle">ابحث بالمهنة أو المدينة أو اسم العامل</div>
-    </header>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-icon">🔍</div>
+            <div class="app-title">البحث عن العمال</div>
+            <div class="app-subtitle">ابحث بالمهنة أو المدينة أو اسم العامل</div>
+        </header>
 
-    <!-- Navigation -->
-    <nav class="nav-tabs">
-      <a href="search.html" class="nav-tab active">🔍 البحث</a>
-      <a href="register.html" class="nav-tab">📝 التسجيل</a>
-      <a href="index.html" class="nav-tab">🏠 الرئيسية</a>
-    </nav>
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <a href="search.html" class="nav-tab active">🔍 البحث</a>
+            <a href="register.html" class="nav-tab">📝 التسجيل</a>
+            <a href="index.html" class="nav-tab">🏠 الرئيسية</a>
+        </nav>
 
-    <!-- Content -->
-    <main class="content-area fade-in">
-      <!-- Search Box -->
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" placeholder="ابحث باسم المهنة أو العامل..." id="searchInput" oninput="filterWorkers()">
-      </div>
+        <!-- Content -->
+        <main class="content-area fade-in">
+            <!-- Search Box -->
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="ابحث باسم المهنة أو العامل..." id="searchInput" oninput="filterWorkers()">
+            </div>
 
-      <!-- Filter Tags -->
-      <div class="filter-tags">
-        <button class="filter-tag active" onclick="filterByJob('all', this)">الكل</button>
-        <button class="filter-tag" onclick="filterByJob('بناء', this)">بناء</button>
-        <button class="filter-tag" onclick="filterByJob('نجار', this)">نجار</button>
-        <button class="filter-tag" onclick="filterByJob('حداد', this)">حداد</button>
-        <button class="filter-tag" onclick="filterByJob('لحام', this)">لحام</button>
-        <button class="filter-tag" onclick="filterByJob('سباك', this)">سباك</button>
-        <button class="filter-tag" onclick="filterByJob('كهربائي', this)">كهربائي</button>
-        <button class="filter-tag" onclick="filterByJob('سائق', this)">سائق</button>
-        <button class="filter-tag" onclick="filterByJob('صباغ', this)">صباغ</button>
-        <button class="filter-tag" onclick="filterByJob('بليط', this)">بليط</button>
-      </div>
+            <!-- Filter Tags -->
+            <div class="filter-tags">
+                <button class="filter-tag active" onclick="filterByJob('all', this)">الكل</button>
+                <button class="filter-tag" onclick="filterByJob('بناء', this)">بناء</button>
+                <button class="filter-tag" onclick="filterByJob('نجار', this)">نجار</button>
+                <button class="filter-tag" onclick="filterByJob('حداد', this)">حداد</button>
+                <button class="filter-tag" onclick="filterByJob('لحام', this)">لحام</button>
+                <button class="filter-tag" onclick="filterByJob('سباك', this)">سباك</button>
+                <button class="filter-tag" onclick="filterByJob('كهربائي', this)">كهربائي</button>
+                <button class="filter-tag" onclick="filterByJob('سائق', this)">سائق</button>
+                <button class="filter-tag" onclick="filterByJob('صباغ', this)">صباغ</button>
+                <button class="filter-tag" onclick="filterByJob('بليط', this)">بليط</button>
+            </div>
 
-      <!-- City Filter -->
-      <div class="form-group" style="margin-bottom: 16px;">
-        <select class="form-select" id="cityFilter" onchange="filterWorkers()">
-          <option value="">📍 جميع المدن</option>
-          <option value="الرياض">الرياض</option>
-          <option value="جدة">جدة</option>
-          <option value="مكة">مكة المكرمة</option>
-          <option value="المدينة">المدينة المنورة</option>
-          <option value="الدمام">الدمام</option>
-          <option value="الخبر">الخبر</option>
-          <option value="أبها">أبها</option>
-          <option value="تبوك">تبوك</option>
-          <option value="بريدة">بريدة</option>
-          <option value="الطائف">الطائف</option>
-          <option value="حائل">حائل</option>
-          <option value="نجران">نجران</option>
-          <option value="جازان">جازان</option>
-          <option value="القصيم">القصيم</option>
-          <option value="الأحساء">الأحساء</option>
-        </select>
-      </div>
+            <!-- City Filter -->
+            <div class="form-group" style="margin-bottom: 16px;">
+                <select class="form-select" id="cityFilter" onchange="filterWorkers()">
+                    <option value="">📍 جميع المدن</option>
 
-      <!-- Workers List -->
-      <div id="workersList">
-        <!-- Worker 1 -->
-        <div class="worker-card" data-job="بناء" data-city="الرياض">
-          <div class="worker-header">
-            <div class="worker-name">أحمد محمد العلي</div>
-            <div class="worker-job">بناء</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 الرياض - حي النسيم</span><br>
-            <span>⭐ 5 سنوات خبرة</span><br>
-            <span>📝 بناء طوب وقصارة وتشطيب</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555123456" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555123456" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                    <!-- مدن الأردن -->
+                    <optgroup label="🇯🇴 الأردن">
+                        <option value="عمان">عمان</option>
+                        <option value="إربد">إربد</option>
+                        <option value="الزرقاء">الزرقاء</option>
+                        <option value="العقبة">العقبة</option>
+                        <option value="السلط">السلط</option>
+                        <option value="المفرق">المفرق</option>
+                        <option value="جرش">جرش</option>
+                        <option value="مأدبا">مأدبا</option>
+                    </optgroup>
 
-        <!-- Worker 2 -->
-        <div class="worker-card" data-job="نجار" data-city="جدة">
-          <div class="worker-header">
-            <div class="worker-name">خالد عبدالرحمن</div>
-            <div class="worker-job">نجار</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 جدة - حي الصفا</span><br>
-            <span>⭐ 12 سنة خبرة</span><br>
-            <span>📝 نجارة أبواب وشبابيك ودواليب</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555987654" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555987654" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                    <!-- مدن السعودية -->
+                    <optgroup label="🇸🇦 السعودية">
+                        <option value="الرياض">الرياض</option>
+                        <option value="جدة">جدة</option>
+                        <option value="مكة">مكة المكرمة</option>
+                        <option value="المدينة">المدينة المنورة</option>
+                        <option value="الدمام">الدمام</option>
+                        <option value="الخبر">الخبر</option>
+                        <option value="أبها">أبها</option>
+                        <option value="تبوك">تبوك</option>
+                        <option value="بريدة">بريدة</option>
+                        <option value="الطائف">الطائف</option>
+                        <option value="حائل">حائل</option>
+                    </optgroup>
 
-        <!-- Worker 3 -->
-        <div class="worker-card" data-job="حداد" data-city="الدمام">
-          <div class="worker-header">
-            <div class="worker-name">سلطان المطيري</div>
-            <div class="worker-job">حداد</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 الدمام - حي الفيصلية</span><br>
-            <span>⭐ 8 سنوات خبرة</span><br>
-            <span>📝 حدادة أبواب حديد وشبابيك ودرابزين</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555345678" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555345678" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                    <!-- مدن مصر -->
+                    <optgroup label="🇪🇬 مصر">
+                        <option value="القاهرة">القاهرة</option>
+                        <option value="الإسكندرية">الإسكندرية</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="المنصورة">المنصورة</option>
+                        <option value="طنطا">طنطا</option>
+                    </optgroup>
 
-        <!-- Worker 4 -->
-        <div class="worker-card" data-job="لحام" data-city="الرياض">
-          <div class="worker-header">
-            <div class="worker-name">ناصر الدوسري</div>
-            <div class="worker-job">لحام</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 الرياض - حي العزيزية</span><br>
-            <span>⭐ 6 سنوات خبرة</span><br>
-            <span>📝 لحام حديد وستانلس وخزانات</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555765432" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555765432" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                    <!-- مدن الإمارات -->
+                    <optgroup label="🇦🇪 الإمارات">
+                        <option value="دبي">دبي</option>
+                        <option value="أبوظبي">أبوظبي</option>
+                        <option value="الشارقة">الشارقة</option>
+                    </optgroup>
+                </select>
+            </div>
 
-        <!-- Worker 5 -->
-        <div class="worker-card" data-job="سائق" data-city="مكة">
-          <div class="worker-header">
-            <div class="worker-name">فهد السبيعي</div>
-            <div class="worker-job">سائق</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 مكة - حي الزاهر</span><br>
-            <span>⭐ 10 سنوات خبرة</span><br>
-            <span>📝 سائق نقل خفيف وثقيل - رخصة عمومي</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555890123" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555890123" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+            <!-- Workers List -->
+            <div id="workersList">
+                <!-- Worker 1 -->
+                <div class="worker-card" data-job="بناء" data-city="عمان">
+                    <div class="worker-header">
+                        <div class="worker-name">أحمد محمد العلي</div>
+                        <div class="worker-job">بناء</div>
+                    </div>
+                    <div class="worker-info">
+                        <span>📍 عمان - خلدا</span><br>
+                        <span>⭐ 5 سنوات خبرة</span><br>
+                        <span>📝 بناء طوب وقصارة وتشطيب</span>
+                    </div>
+                    <div class="worker-actions">
+                        <a href="https://wa.me/962790000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
+                        <a href="tel:0790000000" class="btn btn-call">📞 اتصال</a>
+                    </div>
+                </div>
 
-        <!-- Worker 6 -->
-        <div class="worker-card" data-job="بناء" data-city="بريدة">
-          <div class="worker-header">
-            <div class="worker-name">محمد الشمري</div>
-            <div class="worker-job">بناء</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 بريدة - حي النقرة</span><br>
-            <span>⭐ 15 سنة خبرة</span><br>
-            <span>📝 بناء عظم وتشطيب كامل</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555456789" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555456789" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                <!-- Worker 2 -->
+                <div class="worker-card" data-job="نجار" data-city="إربد">
+                    <div class="worker-header">
+                        <div class="worker-name">خالد عبدالرحمن</div>
+                        <div class="worker-job">نجار</div>
+                    </div>
+                    <div class="worker-info">
+                        <span>📍 إربد - شارع الجامعة</span><br>
+                        <span>⭐ 12 سنة خبرة</span><br>
+                        <span>📝 نجارة أبواب وشبابيك ودواليب</span>
+                    </div>
+                    <div class="worker-actions">
+                        <a href="https://wa.me/962780000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
+                        <a href="tel:0780000000" class="btn btn-call">📞 اتصال</a>
+                    </div>
+                </div>
 
-        <!-- Worker 7 -->
-        <div class="worker-card" data-job="سباك" data-city="جدة">
-          <div class="worker-header">
-            <div class="worker-name">عبدالله القحطاني</div>
-            <div class="worker-job">سباك</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 جدة - حي الروضة</span><br>
-            <span>⭐ 7 سنوات خبرة</span><br>
-            <span>📝 سباكة مواسير وصرف صحي وتركيب سخانات</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555234567" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555234567" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                <!-- Worker 3 -->
+                <div class="worker-card" data-job="حداد" data-city="الرياض">
+                    <div class="worker-header">
+                        <div class="worker-name">سلطان المطيري</div>
+                        <div class="worker-job">حداد</div>
+                    </div>
+                    <div class="worker-info">
+                        <span>📍 الرياض - حي النسيم</span><br>
+                        <span>⭐ 8 سنوات خبرة</span><br>
+                        <span>📝 حدادة أبواب حديد وشبابيك ودرابزين</span>
+                    </div>
+                    <div class="worker-actions">
+                        <a href="https://wa.me/966555345678" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
+                        <a href="tel:0555345678" class="btn btn-call">📞 اتصال</a>
+                    </div>
+                </div>
 
-        <!-- Worker 8 -->
-        <div class="worker-card" data-job="كهربائي" data-city="الدمام">
-          <div class="worker-header">
-            <div class="worker-name">سعد العتيبي</div>
-            <div class="worker-job">كهربائي</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 الدمام - حي الشاطئ</span><br>
-            <span>⭐ 9 سنوات خبرة</span><br>
-            <span>📝 كهرباء منازل وتركيبات وصيانة</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555678901" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555678901" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                <!-- Worker 4 -->
+                <div class="worker-card" data-job="سباك" data-city="الزرقاء">
+                    <div class="worker-header">
+                        <div class="worker-name">عبدالله القحطاني</div>
+                        <div class="worker-job">سباك</div>
+                    </div>
+                    <div class="worker-info">
+                        <span>📍 الزرقاء - الزرقاء الجديدة</span><br>
+                        <span>⭐ 7 سنوات خبرة</span><br>
+                        <span>📝 سباكة مواسير وصرف صحي وتركيب سخانات</span>
+                    </div>
+                    <div class="worker-actions">
+                        <a href="https://wa.me/962770000000" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
+                        <a href="tel:0770000000" class="btn btn-call">📞 اتصال</a>
+                    </div>
+                </div>
 
-        <!-- Worker 9 -->
-        <div class="worker-card" data-job="صباغ" data-city="الرياض">
-          <div class="worker-header">
-            <div class="worker-name">يوسف الحربي</div>
-            <div class="worker-job">صباغ</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 الرياض - حي اليرموك</span><br>
-            <span>⭐ 4 سنوات خبرة</span><br>
-            <span>📝 دهانات داخلية وخارجية وديكورات</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555345012" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555345012" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
+                <!-- No Results Message -->
+                <div id="noResults" style="display:none; text-align:center; padding:40px 20px; color:var(--text-gray);">
+                    <div style="font-size:48px; margin-bottom:12px;">😕</div>
+                    <h3 style="color:var(--primary-green); margin-bottom:8px;">لا توجد نتائج</h3>
+                    <p>جرب البحث بكلمات مختلفة أو تصفية أقل</p>
+                </div>
+            </div>
+        </main>
 
-        <!-- Worker 10 -->
-        <div class="worker-card" data-job="بليط" data-city="مكة">
-          <div class="worker-header">
-            <div class="worker-name">عمر الزهراني</div>
-            <div class="worker-job">بليط</div>
-          </div>
-          <div class="worker-info">
-            <span>📍 مكة - حي العوالي</span><br>
-            <span>⭐ 11 سنة خبرة</span><br>
-            <span>📝 تركيب سيراميك ورخام وبورسلان</span>
-          </div>
-          <div class="worker-actions">
-            <a href="https://wa.me/966555789012" class="btn btn-whatsapp" target="_blank">📱 واتساب</a>
-            <a href="tel:0555789012" class="btn btn-call">📞 اتصال</a>
-          </div>
-        </div>
-
-        <!-- No Results Message -->
-        <div id="noResults" style="display:none; text-align:center; padding:40px 20px; color:var(--text-gray);">
-          <div style="font-size:48px; margin-bottom:12px;">😕</div>
-          <h3 style="color:var(--primary-green); margin-bottom:8px;">لا توجد نتائج</h3>
-          <p>جرب البحث بكلمات مختلفة أو تصفية أقل</p>
-        </div>
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="app-footer">
-      <span class="free-badge">💚 مهنتي - مجاني للجميع</span>
-      <p>تواصل مباشر بين أصحاب المهن والباحثين عنهم</p>
-      <p style="margin-top: 8px; opacity: 0.7;">© 2026 مهنتي - جميع الحقوق محفوظة</p>
-    </footer>
-  </div>
-
-  <script src="js/app.js"></script>
+        <!-- Footer -->
+        <footer class="app-footer">
+            <span class="free-badge">💚 مهنتي - مجاني للجميع</span>
+            <p>تواصل مباشر بين أصحاب المهن والباحثين عنهم</p>
+            <p style="margin-top: 8px; opacity: 0.7;">© 2026 مهنتي - جميع الحقوق محفوظة</p>
+        </footer>
+    </div>
+    <script src="js/app.js"></script>
 </body>
 </html>
