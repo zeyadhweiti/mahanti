@@ -265,6 +265,10 @@
         <label>رقم هاتف المهني:</label>
         <input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
 
+        <!-- إضافـة حقل الخبرة بالسـنوات -->
+        <label>سنوات الخبرة:</label>
+        <input type="number" id="craftsmanExperience" placeholder="مثال: 5">
+
         <button class="btn" onclick="directLogin()">🚀 حفظ الحساب والدخول للوحة التحكم</button>
     </div>
 
@@ -278,7 +282,8 @@
         <div class="feature-card">
             <strong>📱 رقم الهاتف:</strong> <span id="dashPhone"></span><br>
             <strong>🛠️ المهنة:</strong> <span id="dashJob"></span><br>
-            <strong>📍 الموقع والحي:</strong> <span id="dashLocation"></span>
+            <strong>📍 الموقع والحي:</strong> <span id="dashLocation"></span><br>
+            <strong>⭐ الخبرة:</strong> <span id="dashExperience"></span>
         </div>
 
         <div class="feature-card">
@@ -322,11 +327,11 @@
         "جزر القمر": ["موروني"]
     };
 
-    // بيانات عمال افتراضية
+    // بيانات عمال افتراضية تتضمن الخبرة
     const dummyWorkers = [
-        { name: "أحمد العلي", job: "سباك", country: "الأردن", city: "العقبة", district: "الحي التجاري", phone: "0777411458" },
-        { name: "خالد منصور", job: "نجار", country: "السعودية", city: "الرياض", district: "حي العليا", phone: "0501234567" },
-        { name: "محمد حسن", job: "كهربائي", country: "مصر", city: "القاهرة", district: "مدينة نصر", phone: "01012345678" }
+        { name: "أحمد العلي", job: "سباك", country: "الأردن", city: "العقبة", district: "الحي التجاري", phone: "0777411458", experience: "7" },
+        { name: "خالد منصور", job: "نجار", country: "السعودية", city: "الرياض", district: "حي العليا", phone: "0501234567", experience: "5" },
+        { name: "محمد حسن", job: "كهربائي", country: "مصر", city: "القاهرة", district: "مدينة نصر", phone: "01012345678", experience: "10" }
     ];
 
     window.onload = function() {
@@ -419,7 +424,8 @@
                 country: user.country,
                 city: user.city,
                 district: user.district || 'غير محدد',
-                phone: user.phone
+                phone: user.phone,
+                experience: user.experience || 'غير محددة'
             });
         }
 
@@ -443,6 +449,7 @@
                 <strong>🛠️ المهنة:</strong> ${w.job}<br>
                 <strong>👤 الاسم:</strong> ${w.name}<br>
                 <strong>📍 الموقع:</strong> ${w.country} - ${w.city} (${w.district || 'عام'})<br>
+                <strong>⭐ الخبرة:</strong> ${w.experience ? w.experience + ' سنوات' : 'غير محددة'}<br>
                 <strong>📱 الهاتف:</strong> ${w.phone}
                 <div class="action-btns">
                     <a href="tel:${w.phone}" class="btn-call">📞 اتصال مباشر</a>
@@ -464,13 +471,14 @@
         const city = document.getElementById('citySelect').value;
         const district = document.getElementById('craftsmanDistrict').value.trim();
         const phone = document.getElementById('craftsmanPhone').value.trim();
+        const experience = document.getElementById('craftsmanExperience').value.trim();
 
         if (!job || !country || !city || !phone) {
             alert('يرجى ملء كافة الحقول الأساسية لإنهاء التسجيل.');
             return;
         }
 
-        const userData = { job: job, country: country, city: city, district: district, phone: phone };
+        const userData = { job: job, country: country, city: city, district: district, phone: phone, experience: experience };
         localStorage.setItem('mahantiDirectUser', JSON.stringify(userData));
         
         alert('تم الحفظ والتسجيل بنجاح! جاري تحويلك للوحة التحكم...');
@@ -482,6 +490,7 @@
         document.getElementById('dashPhone').innerText = userData.phone;
         document.getElementById('dashJob').innerText = userData.job;
         document.getElementById('dashLocation').innerText = `${userData.country} - ${userData.city} (${userData.district || 'عام'})`;
+        document.getElementById('dashExperience').innerText = userData.experience ? `${userData.experience} سنوات` : 'غير محددة';
     }
 
     function logout() {
