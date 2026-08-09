@@ -50,7 +50,7 @@
                         </select>
                     </div>
 
-                    <!-- رقم الجوال مع رمز الدولة التلقائي -->
+                    <!-- رقم الجوال -->
                     <div class="form-group">
                         <label class="form-label">رقم الجوال / الواتساب <span style="color:red">*</span></label>
                         <div style="display: flex; gap: 8px; dir: ltr;">
@@ -85,7 +85,7 @@
                         </select>
                     </div>
 
-                    <!-- المنطقة / الحي -->
+                    <!-- الحي / المنطقة -->
                     <div class="form-group">
                         <label class="form-label">الحي / المنطقة</label>
                         <input type="text" class="form-input" id="workerArea" placeholder="مثال: خلدا / حي النسيم">
@@ -103,20 +103,32 @@
                         </select>
                     </div>
 
-                    <!-- وصف المهنة -->
+                    <!-- الوصف -->
                     <div class="form-group">
                         <label class="form-label">وصف المهنة والخدمات</label>
                         <textarea class="form-input" id="workerDesc" rows="3" placeholder="اكتب نبذة عن خبراتك وخدماتك..."></textarea>
                     </div>
 
                     <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
-                        إرسال وإتمام التسجيل 🚀
+                        إرسال رمز التفعيل 📲
                     </button>
                 </form>
             </div>
         </main>
 
-        <!-- Footer -->
+        <!-- نافذة منبثقة لإدخال رمز OTP المكون من 4 أرقام -->
+        <div id="otpModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center;">
+            <div style="background:#fff; padding:24px; border-radius:12px; width:90%; max-width:360px; text-align:center; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                <h3 style="margin-bottom: 8px;">📲 تأكيد رقم الهاتف</h3>
+                <p style="font-size:14px; color:#666; margin-bottom:16px;">أدخل الرمز المكون من 4 أرقام المرسل إلى هاتفك:</p>
+
+                <input type="text" id="otpInput" maxlength="4" style="font-size:28px; letter-spacing:10px; text-align:center; width:100%; padding:10px; margin-bottom:16px; border:2px solid var(--primary-green, #28a745); border-radius:8px;" placeholder="0000">
+
+                <button type="button" onclick="submitOTP()" id="verifyBtn" class="btn btn-primary" style="width:100%; margin-bottom:8px;">تأكيد وتفعيل 🚀</button>
+                <button type="button" onclick="closeOtpModal()" style="background:none; border:none; color:red; cursor:pointer; font-size:14px;">إلغاء</button>
+            </div>
+        </div>
+
         <footer class="app-footer">
             <span class="free-badge">🎁 التسجيل مجاني بالكامل - لا رسوم ولا عمولات</span>
             <p style="margin-top: 8px; opacity: 0.7;">© 2026 مهنتي - جميع الحقوق محفوظة</p>
@@ -130,6 +142,8 @@
             EG: { code: "+20", placeholder: "01XXXXXXXXX", cities: ["القاهرة", "الإسكندرية", "الجيزة", "المنصورة", "طنطا"] },
             AE: { code: "+971", placeholder: "05XXXXXXXX", cities: ["دبي", "أبوظبي", "الشارقة", "عجمان"] }
         };
+
+        let currentWorkerData = null;
 
         function onCountryChange() {
             const countrySelect = document.getElementById('countrySelect');
@@ -157,14 +171,13 @@
             }
         }
 
-        // دالة التسجيل وإرسال البيانات إلى السيرفر مباشرة
         async function handleRegister(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري الحفظ... ⏳';
+            submitBtn.textContent = 'جاري إرسال الرمز... ⏳';
 
-            const workerData = {
+            currentWorkerData = {
                 name: document.getElementById('workerName').value,
                 country: document.getElementById('countrySelect').value,
                 phone: document.getElementById('phoneCode').textContent + document.getElementById('workerPhone').value,
@@ -176,26 +189,64 @@
             };
 
             try {
-                const response = await fetch('/api/register', {
+                const res = await fetch('/api/send-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(workerData)
+                    body: JSON.stringify({ phone: currentWorkerData.phone })
                 });
 
-                if (response.ok) {
-                    alert('تم التسجيل بنجاح! بياناتك تُحفظ الآن في السيرفر.');
-                    window.location.href = 'search.html';
+                if (res.ok) {
+                    document.getElementById('otpModal').style.display = 'flex';
                 } else {
-                    const err = await response.json();
-                    alert('خطأ: ' + (err.error || 'تعذر إتمام التسجيل'));
+                    alert('تعذر إرسال رمز التفعيل. يرجى المحاولة لاحقاً.');
                 }
-            } catch (error) {
-                console.error(error);
-                alert('فشل الاتصال بالسيرفر. يرجى المحاولة لاحقاً.');
+            } catch (err) {
+                console.error(err);
+                alert('خطأ في الاتصال بالسيرفر.');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'إرسال وإتمام التسجيل 🚀';
+                submitBtn.textContent = 'إرسال رمز التفعيل 📲';
             }
+        }
+
+        async function submitOTP() {
+            const otpCode = document.getElementById('otpInput').value.trim();
+            const verifyBtn = document.getElementById('verifyBtn');
+
+            if (otpCode.length !== 4) {
+                alert('يرجى إدخال رمز مكون من 4 أرقام');
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'جاري التحقق... ⏳';
+
+            try {
+                const res = await fetch('/api/verify-and-register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ workerData: currentWorkerData, otpCode: otpCode })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert('تم توثيق حسابك وتسجيل بياناتك بنجاح! 🎉');
+                    window.location.href = 'search.html';
+                } else {
+                    alert(data.error || 'رمز التفعيل غير صحيح');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('حدث خطأ أثناء التحقق');
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'تأكيد وتفعيل 🚀';
+            }
+        }
+
+        function closeOtpModal() {
+            document.getElementById('otpModal').style.display = 'none';
         }
     </script>
     <script src="js/app.js"></script>
