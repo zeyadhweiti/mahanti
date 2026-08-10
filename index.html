@@ -1,592 +1,493 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مهنتي - الدخول المباشر والبحث</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #2e7d32; /* لون حشيشي رئيسي للخلفية */
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background: #1b5e20; /* أخضر حشيشي داكن للبطاقة الرئيسية */
-            padding: 25px;
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-            border: 2px solid #fbc02d; /* إطار أصفر */
-        }
-        h2 { color: #ffeb3b; margin-bottom: 10px; } /* عناوين باللون الأصفر */
-        p.subtitle { color: #e0f2f1; font-size: 14px; margin-bottom: 20px; }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #fbc02d;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: none;
-            font-size: 15px;
-            font-weight: bold;
-            color: #ffffff;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .tab-btn.active {
-            color: #ffeb3b; /* أصفر عند التحديد */
-            border-bottom: 4px solid #ffeb3b;
-        }
-
-        .btn {
-            background-color: #0d47a1; /* أزرق ملكي للأزرار الرئيسية */
-            color: #ffeb3b; /* نص أصفر */
-            border: 1px solid #fbc02d;
-            padding: 13px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 12px;
-            transition: 0.3s;
-        }
-        .btn:hover { background-color: #1565c0; }
-        
-        input, select {
-            width: 100%;
-            padding: 11px;
-            margin: 6px 0 12px 0;
-            border: 1px solid #fbc02d;
-            border-radius: 6px;
-            font-size: 14px;
-            background-color: #ffffff;
-            color: #0d47a1; /* نص أزرق للمدخلات */
-            font-weight: 600;
-        }
-        label {
-            display: block;
-            text-align: right;
-            font-weight: bold;
-            font-size: 14px;
-            color: #ffeb3b; /* عناوين الحقول بالأصفر */
-        }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        /* بطاقات العمال المتوفرين */
-        .worker-card {
-            background: #0d47a1; /* خلفية كروت النتائج باللون الأزرق */
-            border: 1px solid #fbc02d;
-            border-radius: 8px;
-            padding: 14px;
-            margin-top: 12px;
-            text-align: right;
-            color: #ffffff;
-        }
-        .worker-card strong { color: #ffeb3b; } /* النص البارز بالأصفر */
-        
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .btn-call {
-            background-color: #1565c0;
-            color: #ffeb3b;
-            text-decoration: none;
-            padding: 9px;
-            border-radius: 5px;
-            flex: 1;
-            text-align: center;
-            font-size: 13px;
-            font-weight: bold;
-            border: 1px solid #fbc02d;
-        }<label>رقم هاتف المهني:</label>
-<input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
-        <!-- زر إرسال كود التحقق من فايبربيس -->
-<button class="btn" type="button" id="sendCodeBtn" style="background-color: #2e7d32; margin-top: 5px;">📲 إرسال كود التحقق لفيسبوك/فايبربيس</button>
-
-<!-- حاوية أمان Firebase reCAPTCHA -->
-<div id="recaptcha-container"></div>
-
-<!-- حقل إدخال الكود المكون من 6 أرقام (يظهر بعد الإرسال) -->
-<div id="verificationSection" style="display: none; margin-top: 10px;">
-  <label>أدخل كود التحقق المرسل لهاتفك:</label>
-  <input type="text" id="verificationCode" placeholder="123456">
-  <button class="btn" type="button" id="verifyCodeBtn" style="background-color: #fbc02d; color: #000;">✅ تأكيد الكود</button>
-</div>
-
-<!-- رسالة توضيح حالة الإرسال -->
-<p id="authStatus" style="color: #ffeb3b; font-size: 13px; margin-top: 8px;"></p>
-
-        
-        .btn-whatsapp {
-            background-color: #2e7d32;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 9px;
-            border-radius: 5px;
-            flex: 1;
-            text-align: center;
-            font-size: 13px;
-            font-weight: bold;
-            border: 1px solid #81c784;
-        }
-
-        /* كارت لوحة التحكم الخضراء للأدمن/المهني */
-        .feature-card {
-            background: #0d47a1;
-            border: 1px solid #fbc02d;
-            padding: 14px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            text-align: right;
-            font-size: 14px;
-            color: #ffffff;
-        }
-        .feature-card strong { color: #ffeb3b; }
-        
-        .btn-danger {
-            background-color: #c62828;
-            color: #ffffff;
-            border: 1px solid #ef5350;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة مهنتي - الدخول المباشر والبحث</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #2e7d32; /* لون حشيشي رئيسي للخلفية */
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #1b5e20; /* أخضر حشيشي داكن للبطاقة الرئيسية */
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      border: 2px solid #fbc02d; /* إطار أصفر */
+    }
+    h2 { color: #ffeb3b; margin-bottom: 10px; } /* عناوين باللون الأصفر */
+    p.subtitle { color: #e0f2f1; font-size: 14px; margin-bottom: 20px; }
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #fbc02d;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: none;
+      font-size: 15px;
+      font-weight: bold;
+      color: #ffffff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .tab-btn.active {
+      color: #ffeb3b; /* أصفر عند التحديد */
+      border-bottom: 4px solid #ffeb3b;
+    }
+    .btn {
+      background-color: #0d47a1; /* أزرق ملكي للأزرار الرئيسية */
+      color: #ffeb3b; /* نص أصفر */
+      border: 1px solid #fbc02d;
+      padding: 13px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 12px;
+      transition: 0.3s;
+    }
+    .btn:hover { background-color: #1565c0; }
+    input, select {
+      width: 100%;
+      padding: 11px;
+      margin: 6px 0 12px 0;
+      border: 1px solid #fbc02d;
+      border-radius: 6px;
+      font-size: 14px;
+      background-color: #ffffff;
+      color: #0d47a1; /* نص أزرق للمدخلات */
+      font-weight: 600;
+    }
+    label {
+      display: block;
+      text-align: right;
+      font-weight: bold;
+      font-size: 14px;
+      color: #ffeb3b; /* عناوين الحقول بالأصفر */
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* بطاقات العمال المتوفرين */
+    .worker-card {
+      background: #0d47a1; /* خلفية كروت النتائج باللون الأزرق */
+      border: 1px solid #fbc02d;
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 12px;
+      text-align: right;
+      color: #ffffff;
+    }
+    .worker-card strong { color: #ffeb3b; } /* النص البارز بالأصفر */
+    .action-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .btn-call {
+      background-color: #1565c0;
+      color: #ffeb3b;
+      text-decoration: none;
+      padding: 9px;
+      border-radius: 5px;
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+      border: 1px solid #fbc02d;
+    }
+    .btn-whatsapp {
+      background-color: #2e7d32;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 9px;
+      border-radius: 5px;
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+      border: 1px solid #81c784;
+    }
+    /* كارت لوحة التحكم الخضراء للأدمن/المهني */
+    .feature-card {
+      background: #0d47a1;
+      border: 1px solid #fbc02d;
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      text-align: right;
+      font-size: 14px;
+      color: #ffffff;
+    }
+    .feature-card strong { color: #ffeb3b; }
+    .btn-danger {
+      background-color: #c62828;
+      color: #ffffff;
+      border: 1px solid #ef5350;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container" id="mainContainer">
-    
+  <div class="container" id="mainContainer">
     <!-- التبويبات العلويّة -->
     <div class="tabs" id="mainTabs">
-        <button class="tab-btn active" onclick="switchTab('search')">🔍 البحث عن عمال</button>
-        <button class="tab-btn" onclick="switchTab('login')">🛠️ دخول المهنيين</button>
+      <button class="tab-btn active" onclick="switchTab('search')">🔍 البحث عن عمال</button>
+      <button class="tab-btn" onclick="switchTab('login')">🛠️ دخول المهنيين</button>
     </div>
 
     <!-- التبويب 1: صفحة البحث عن العمال -->
     <div id="tab-search" class="tab-content active">
-        <h2>🔍 ابحث عن حرفي أو عامل</h2>
-        <p class="subtitle">اختر الدولة والمدينة والحي والمهنة للوصول المباشر للعمال</p>
+      <h2>🔍 ابحث عن حرفي أو عامل</h2>
+      <p class="subtitle">اختر الدولة والمدينة والحي والمهنة للوصول المباشر للعمال</p>
 
-        <label>اختر الدولة:</label>
-        <select id="searchCountry" onchange="updateSearchCities()">
-            <option value="">-- اختر الدولة --</option>
-        </select>
+      <label>اختر الدولة:</label>
+      <select id="searchCountry" onchange="updateSearchCities()">
+        <option value="">-- اختر الدولة --</option>
+      </select>
 
-        <label>اختر المدينة:</label>
-        <select id="searchCity">
-            <option value="">-- اختر المدينة --</option>
-        </select>
+      <label>اختر المدينة:</label>
+      <select id="searchCity">
+        <option value="">-- اختر المدينة --</option>
+      </select>
 
-        <label>اسم الحي / المنطقة (اختياري):</label>
-        <input type="text" id="searchDistrict" placeholder="أدخل اسم الحي للبحث المفصل...">
+      <label>اسم الحي / المنطقة (اختياري):</label>
+      <input type="text" id="searchDistrict" placeholder="أدخل اسم الحي للبحث المفصل...">
 
-        <label>اختر المهنة المطلوب البحث عنها:</label>
-        <select id="searchJob" onchange="toggleOtherJobInput('searchJob', 'searchOtherJobContainer')">
-            <option value="">-- جميع المهن --</option>
-            <option value="سباك">سباك / صحي</option>
-            <option value="كهربائي">كهربائي</option>
-            <option value="نجار">نجار</option>
-            <option value="دهان">دهان / نقاش</option>
-            <option value="فني تكييف">فني تكييف وتبريد</option>
-            <option value="عامل بناء">عامل بناء / بنّاء</option>
-            <option value="مبلط">مبلط / سيراميك</option>
-            <option value="حداد">حداد</option>
-            <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
-            <option value="جبس بورد">فني ديكور / جبس بورد</option>
-            <option value="مصلح أجهزة">مصلح أدوات منزلية وأجهزة</option>
-            <option value="ميكانيكي">ميكانيكي سيارات</option>
-            <option value="كهربائي سيارات">كهربائي سيارات</option>
-            <option value="بنشري">بنشري / إطارات</option>
-            <option value="سائق">سائق / توصيل</option>
-            <option value="مزارع">مزارع / تنسيق حدائق</option>
-            <option value="عامل نظافة">عامل / عاملة نظافة</option>
-            <option value="خياط">خياط / تنجيد</option>
-            <option value="طباخ">طباخ / صانع حلويات</option>
-            <option value="حلاق">حلاق / كوافير</option>
-            <option value="أخرى">أخرى (أدخل المهنة)</option>
-        </select>
+      <label>اختر المهنة المطلوب البحث عنها:</label>
+      <select id="searchJob" onchange="toggleOtherJobInput('searchJob', 'searchOtherJobContainer')">
+        <option value="">-- جميع المهن --</option>
+        <option value="سباك">سباك / صحي</option>
+        <option value="كهربائي">كهربائي</option>
+        <option value="نجار">نجار</option>
+        <option value="دهان">دهان / نقاش</option>
+        <option value="فني تكييف">فني تكييف وتبريد</option>
+        <option value="عامل بناء">عامل بناء / بنّاء</option>
+        <option value="مبلط">مبلط / سيراميك</option>
+        <option value="حداد">حداد</option>
+        <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
+        <option value="جبس بورد">فني ديكور / جبس بورد</option>
+        <option value="مصلح أجهزة">مصلح أدوات منزلية وأجهزة</option>
+        <option value="ميكانيكي">ميكانيكي سيارات</option>
+        <option value="كهربائي سيارات">كهربائي سيارات</option>
+        <option value="بنشري">بنشري / إطارات</option>
+        <option value="سائق">سائق / توصيل</option>
+        <option value="مزارع">مزارع / تنسيق حدائق</option>
+        <option value="عامل نظافة">عامل / عاملة نظافة</option>
+        <option value="خياط">خياط / تنجيد</option>
+        <option value="طباخ">طباخ / صانع حلويات</option>
+        <option value="حلاق">حلاق / كوافير</option>
+        <option value="أخرى">أخرى (أدخل المهنة)</option>
+      </select>
 
-        <div id="searchOtherJobContainer" style="display: none;">
-            <label>اكتب المهنة:</label>
-            <input type="text" id="searchOtherJobText" placeholder="أدخل اسم المهنة...">
-        </div>
+      <div id="searchOtherJobContainer" style="display: none;">
+        <label>اكتب المهنة:</label>
+        <input type="text" id="searchOtherJobText" placeholder="أدخل اسم المهنة...">
+      </div>
 
-        <button class="btn" onclick="performSearch()">🔍 بحث عن العمال المتاحين</button>
+      <button class="btn" onclick="performSearch()">🔍 بحث عن العمال المتاحين</button>
 
-        <div id="searchResults" style="margin-top: 15px;"></div>
+      <div id="searchResults" style="margin-top: 15px;"></div>
     </div>
 
     <!-- التبويب 2: تسجيل دخول وتأكيد حساب المهنيين -->
     <div id="tab-login" class="tab-content">
-        <h2>🛠️ تسجيل دخول مهني</h2>
-        <p class="subtitle">أدخل بياناتك لتظهر في نتائج البحث فوراً للعملاء</p>
+      <h2>🛠️ تسجيل دخول مهني</h2>
+      <p class="subtitle">أدخل بياناتك لتظهر في نتائج البحث فوراً للعملاء</p>
 
-        <label>اختر المهنة / التخصص:</label>
-        <select id="jobSelect" onchange="toggleOtherJobInput('jobSelect', 'loginOtherJobContainer')">
-            <option value="">-- اختر المهنة --</option>
-            <option value="سباك">سباك / صحي</option>
-            <option value="كهربائي">كهربائي</option>
-            <option value="نجار">نجار</option>
-            <option value="دهان">دهان / نقاش</option>
-            <option value="فني تكييف">فني تكييف وتبريد</option>
-            <option value="عامل بناء">عامل بناء / بنّاء</option>
-            <option value="مبلط">مبلط / سيراميك</option>
-            <option value="حداد">حداد</option>
-            <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
-            <option value="جبس بورد">فني ديكور / جبس بورد</option>
-            <option value="مصلح أجهزة">مصلح أدوات منزلية وأجهزة</option>
-            <option value="ميكانيكي">ميكانيكي سيارات</option>
-            <option value="كهربائي سيارات">كهربائي سيارات</option>
-            <option value="بنشري">بنشري / إطارات</option>
-            <option value="سائق">سائق / توصيل</option>
-            <option value="مزارع">مزارع / تنسيق حدائق</option>
-            <option value="عامل نظافة">عامل / عاملة نظافة</option>
-            <option value="خياط">خياط / تنجيد</option>
-            <option value="طباخ">طباخ / صانع حلويات</option>
-            <option value="حلاق">حلاق / كوافير</option>
-            <option value="أخرى">أخرى (أدخل المهنة)</option>
-        </select>
+      <label>اختر المهنة / التخصص:</label>
+      <select id="jobSelect" onchange="toggleOtherJobInput('jobSelect', 'loginOtherJobContainer')">
+        <option value="">-- اختر المهنة --</option>
+        <option value="سباك">سباك / صحي</option>
+        <option value="كهربائي">كهربائي</option>
+        <option value="نجار">نجار</option>
+        <option value="دهان">دهان / نقاش</option>
+        <option value="فني تكييف">فني تكييف وتبريد</option>
+        <option value="عامل بناء">عامل بناء / بنّاء</option>
+        <option value="مبلط">مبلط / سيراميك</option>
+        <option value="حداد">حداد</option> <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
+        <option value="جبس بورد">فني ديكور / جبس بورد</option>
+        <option value="مصلح أجهزة">مصلح أدوات منزلية وأجهزة</option>
+        <option value="ميكانيكي">ميكانيكي سيارات</option>
+        <option value="كهربائي سيارات">كهربائي سيارات</option>
+        <option value="بنشري">بنشري / إطارات</option>
+        <option value="سائق">سائق / توصيل</option>
+        <option value="مزارع">مزارع / تنسيق حدائق</option>
+        <option value="عامل نظافة">عامل / عاملة نظافة</option>
+        <option value="خياط">خياط / تنجيد</option>
+        <option value="طباخ">طباخ / صانع حلويات</option>
+        <option value="حلاق">حلاق / كوافير</option>
+        <option value="أخرى">أخرى (أدخل المهنة)</option>
+      </select>
 
-        <div id="loginOtherJobContainer" style="display: none;">
-            <label>اكتب مهنتك:</label>
-            <input type="text" id="loginOtherJobText" placeholder="أدخل اسم مهنتك...">
-        </div>
+      <div id="loginOtherJobContainer" style="display: none;">
+        <label>اكتب مهنتك:</label>
+        <input type="text" id="loginOtherJobText" placeholder="أدخل اسم مهنتك...">
+      </div>
 
-        <label>اختر الدولة:</label>
-        <select id="countrySelect" onchange="updateCities()">
-            <option value="">-- اختر الدولة --</option>
-        </select>
+      <label>اختر الدولة:</label>
+      <select id="countrySelect" onchange="updateCities()">
+        <option value="">-- اختر الدولة --</option>
+      </select>
 
-        <label>اختر المدينة:</label>
-        <select id="citySelect">
-            <option value="">-- اختر المدينة --</option>
-        </select>
+      <label>اختر المدينة:</label>
+      <select id="citySelect">
+        <option value="">-- اختر المدينة --</option>
+      </select>
 
-        <label>اسم الحي / المنطقة:</label>
-        <input type="text" id="craftsmanDistrict" placeholder="مثال: الشميساني، حي الزهراء...">
+      <label>اسم الحي / المنطقة:</label>
+      <input type="text" id="craftsmanDistrict" placeholder="مثال: الشميساني، حي الزهراء...">
 
-        <label>رقم هاتف المهني:</label>
-        <input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
+      <label>رقم هاتف المهني:</label>
+      <input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
 
-        <!-- إضافـة حقل الخبرة بالسـنوات -->
-        <label>سنوات الخبرة:</label>
-        <input type="number" id="craftsmanExperience" placeholder="مثال: 5">
+      <!-- حقل الخبرة بالسـنوات -->
+      <label>سنوات الخبرة:</label>
+      <input type="number" id="craftsmanExperience" placeholder="مثال: 5">
 
-        <button class="btn" onclick="directLogin()">🚀 حفظ الحساب والدخول للوحة التحكم</button>
+      <button class="btn" onclick="directLogin()">🚀 حفظ الحساب والدخول للوحة التحكم</button>
     </div>
 
     <!-- الواجهة 3: لوحة التحكم المباشرة للمهني بعد التسجيل -->
     <div id="step-dashboard" class="tab-content">
-        <h2>🛠️ لوحة تحكم المهني</h2>
-        <div style="margin-bottom: 12px;">
-            <span style="background-color: #ffeb3b; color: #0d47a1; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold;">🟢 حسابك متاح في نتائج البحث الآن</span>
-        </div>
+      <h2>🛠️ لوحة تحكم المهني</h2>
+      <div style="margin-bottom: 12px;">
+        <span style="background-color: #ffeb3b; color: #0d47a1; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold;">🟢 حسابك متاح في نتائج البحث الآن</span>
+      </div>
 
-        <div class="feature-card">
-            <strong>📱 رقم الهاتف:</strong> <span id="dashPhone"></span><br>
-            <strong>🛠️ المهنة:</strong> <span id="dashJob"></span><br>
-            <strong>📍 الموقع والحي:</strong> <span id="dashLocation"></span><br>
-            <strong>⭐ الخبرة:</strong> <span id="dashExperience"></span>
-        </div>
+      <div class="feature-card">
+        <strong>📱 رقم الهاتف:</strong> <span id="dashPhone"></span><br>
+        <strong>🛠️ المهنة:</strong> <span id="dashJob"></span><br>
+        <strong>📍 الموقع والحي:</strong> <span id="dashLocation"></span><br>
+        <strong>⭐ الخبرة:</strong> <span id="dashExperience"></span>
+      </div>
 
-        <div class="feature-card">
-            <strong>📍 حالة التواجد:</strong>
-            <select id="workStatus" style="margin-top:5px; color:#0d47a1;">
-                <option value="active">🟢 متاح للعمل واستقبال الاتصالات</option>
-                <option value="busy">🔴 مشغول حالياً</option>
-            </select>
-        </div>
+      <div class="feature-card">
+        <strong>📍 حالة التواجد:</strong>
+        <select id="workStatus" style="margin-top:5px; color:#0d47a1;">
+          <option value="active">🟢 متاح للعمل واستقبال الاتصالات</option>
+          <option value="busy">🔴 مشغول حالياً</option>
+        </select>
+      </div>
 
-        <button class="btn" onclick="switchTab('search')">🔍 الانتقال لصفحة البحث لرؤية حسابك</button>
-        <button class="btn btn-danger" onclick="logout()">تسجيل الخروج</button>
+      <button class="btn" onclick="switchTab('search')">🔍 الانتقال لصفحة البحث لرؤية حسابك</button>
+      <button class="btn btn-danger" onclick="logout()">تسجيل الخروج</button>
     </div>
+  </div>
 
-</div>
-
-<script>
+  <script>
     // قائمة الدول والمدن الموسعة بالكامل
     const arabCountries = {
-        "الأردن": ["عمان", "الزرقاء", "إربد", "العقبة", "البلقاء", "المفرق", "جرش", "عجلون", "مأدبا", "الكرك", "الطفيلة", "معان"],
-        "السعودية": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "حائل", "القصيم", "الطائف", "النجران", "جيزان", "الأحساء"],
-        "مصر": ["القاهرة", "الجيزة", "الإسكندرية", "المنصورة", "طنطا", "أسيوط", "سوهاج", "الأقصر", "أسوان", "الزقازيق", "بورسعيد", "السويس", "الإسماعيلية"],
-        "الإمارات": ["أبوظبي", "دبي", "الشارقة", "عجمان", "رأس الخيمة", "الفجيرة", "أم القيوين", "العين"],
-        "الكويت": ["الكويت العاصمة", "الأحمدي", "حولي", "الفروانية", "الجهراء", "مبارك الكبير"],
-        "قطر": ["الدوحة", "الريان", "الوكرة", "الخور", "أم صلال"],
-        "البحرين": ["المنامة", "المحرق", "الرفاع", "مدينة عيسى", "مدينة حمد"],
-        "عُمان": ["مسقط", "صلالة", "صحار", "نزوى", "صور", "البريمي"],
-        "العراق": ["بغداد", "البصرة", "أربيل", "الموصل", "النجف", "كربلاء", "كركوك", "السليمانية"],
-        "سوريا": ["دمشق", "حلب", "حمص", "اللاذقية", "طرطوس", "حماة"],
-        "لبنان": ["بيروت", "طرابلس", "صيدا", "صور", "زحلة"],
-        "فلسطين": ["القدس", "رام الله", "غزة", "نابلس", "الخليل", "بيت لحم", "جنين", "طولكرم"],
-        "اليمن": ["صنعاء", "عدن", "تعز", "الحديدية", "المكلا"],
-        "السودان": ["الخرطوم", "أم درمان", "بورتسودان", "كسلا"],
-        "ليبيا": ["طرابلس", "بنغازي", "مصراتة", "الزاوية"],
-        "الجزائر": ["الجزائر العاصمة", "وهران", "قسنطينة", "عنابة", "بليدة"],
-        "المغرب": ["الرباط", "الدار البيضاء", "مراكش", "فاس", "طنجة", "أكادير"],
-        "تونس": ["تونس العاصمة", "صفاقس", "سوسة", "بنزرت"],
-        "موريتانيا": ["نواكشوط", "نواذيبو"],
-        "الصومال": ["مقديشو", "هرجيسا"],
-        "جيبوتي": ["جيبوتي العاصمة"],
-        "جزر القمر": ["موروني"]
+      "الأردن": ["عمان", "الزرقاء", "إربد", "العقبة", "البلقاء", "المفرق", "جرش", "عجلون", "مأدبا", "الكرك", "الطفيلة", "معان"],
+      "السعودية": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "حائل", "القصيم", "الطائف", "النجران", "جيزان", "الأحساء"],
+      "مصر": ["القاهرة", "الجيزة", "الإسكندرية", "المنصورة", "طنطا", "أسيوط", "سوهاج", "الأقصر", "أسوان", "الزقازيق", "بورسعيد", "السويس", "الإسماعيلية"],
+      "الإمارات": ["أبوظبي", "دبي", "الشارقة", "عجمان", "رأس الخيمة", "الفجيرة", "أم القيوين", "العين"],
+      "الكويت": ["الكويت العاصمة", "الأحمدي", "حولي", "الفروانية", "الجهراء", "مبارك الكبير"],
+      "قطر": ["الدوحة", "الريان", "الوكرة", "الخور", "أم صلال"],
+      "البحرين": ["المنامة", "المحرق", "الرفاع", "مدينة عيسى", "مدينة حمد"],
+      "عُمان": ["مسقط", "صلالة", "صحار", "نزوى", "صور", "البريمي"],
+      "العراق": ["بغداد", "البصرة", "أربيل", "الموصل", "النجف", "كربلاء", "كركوك", "السليمانية"],
+      "سوريا": ["دمشق", "حلب", "حمص", "اللاذقية", "طرطوس", "حماة"],
+      "لبنان": ["بيروت", "طرابلس", "صيدا", "صور", "زحلة"],
+      "فلسطين": ["القدس", "رام الله", "غزة", "نابلس", "الخليل", "بيت لحم", "جنين", "طولكرم"],
+      "اليمن": ["صنعاء", "عدن", "تعز", "الحديدية", "المكلا"],
+      "السودان": ["الخرطوم", "أم درمان", "بورتسودان", "كسلا"],
+      "ليبيا": ["طرابلس", "بنغازي", "مصراتة", "الزاوية"],
+      "الجزائر": ["الجزائر العاصمة", "وهران", "قسنطينة", "عنابة", "بليدة"],
+      "المغرب": ["الرباط", "الدار البيضاء", "مراكش", "فاس", "طنجة", "أكادير"],
+      "تونس": ["تونس العاصمة", "صفاقس", "سوسة", "بنزرت"],
+      "موريتانيا": ["نواكشوط", "نواذيبو"],
+      "الصومال": ["مقديشو", "هرجيسا"],
+      "جيبوتي": ["جيبوتي العاصمة"],
+      "جزر القمر": ["موروني"]
     };
 
     // بيانات عمال افتراضية تتضمن الخبرة
     const dummyWorkers = [
-        { name: "أحمد العلي", job: "سباك", country: "الأردن", city: "العقبة", district: "الحي التجاري", phone: "0777411458", experience: "7" },
-        { name: "خالد منصور", job: "نجار", country: "السعودية", city: "الرياض", district: "حي العليا", phone: "0501234567", experience: "5" },
-        { name: "محمد حسن", job: "كهربائي", country: "مصر", city: "القاهرة", district: "مدينة نصر", phone: "01012345678", experience: "10" }
+      { name: "أحمد العلي", job: "سباك", country: "الأردن", city: "العقبة", district: "الحي التجاري", phone: "0777411458", experience: "7" },
+      { name: "خالد منصور", job: "نجار", country: "السعودية", city: "الرياض", district: "حي العليا", phone: "0501234567", experience: "5" },
+      { name: "محمد حسن", job: "كهربائي", country: "مصر", city: "القاهرة", district: "مدينة نصر", phone: "01012345678", experience: "10" }
     ];
 
     window.onload = function() {
-        populateCountries('searchCountry');
-        populateCountries('countrySelect');
-
-        const savedUser = localStorage.getItem('mahantiDirectUser');
-        if (savedUser) {
-            displayDashboard(JSON.parse(savedUser));
-        }
+      populateCountries('searchCountry');
+      populateCountries('countrySelect');
+      
+      const savedUser = localStorage.getItem('mahantiDirectUser');
+      if (savedUser) {
+        displayDashboard(JSON.parse(savedUser));
+      }
     };
 
     function populateCountries(selectId) {
-        const select = document.getElementById(selectId);
-        for (let country in arabCountries) {
-            let option = document.createElement('option');
-            option.value = country;
-            option.textContent = country;
-            select.appendChild(option);
-        }
+      const select = document.getElementById(selectId);
+      for (let country in arabCountries) {
+        let option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        select.appendChild(option);
+      }
     }
 
     function updateSearchCities() { updateCitiesGeneric('searchCountry', 'searchCity'); }
     function updateCities() { updateCitiesGeneric('countrySelect', 'citySelect'); }
 
     function updateCitiesGeneric(countryId, cityId) {
-        const country = document.getElementById(countryId).value;
-        const citySelect = document.getElementById(cityId);
-        citySelect.innerHTML = '<option value="">-- اختر المدينة --</option>';
-
-        if (country && arabCountries[country]) {
-            arabCountries[country].forEach(city => {
-                let option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
-        }
+      const country = document.getElementById(countryId).value;
+      const citySelect = document.getElementById(cityId);
+      citySelect.innerHTML = '<option value="">-- اختر المدينة --</option>';
+      if (country && arabCountries[country]) {
+        arabCountries[country].forEach(city => {
+          let option = document.createElement('option');
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
+      }
     }
 
     function toggleOtherJobInput(selectId, containerId) {
-        const selectVal = document.getElementById(selectId).value;
-        const container = document.getElementById(containerId);
-        container.style.display = (selectVal === 'أخرى') ? 'block' : 'none';
+      const selectVal = document.getElementById(selectId).value;
+      const container = document.getElementById(containerId);
+      container.style.display = (selectVal === 'أخرى') ? 'block' : 'none';
     }
 
     // التنقل بين التبويبات
     function switchTab(tabName) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.getElementById('mainTabs').style.display = 'flex';
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById('mainTabs').style.display = 'flex';
 
-        if (tabName === 'search') {
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            document.getElementById('tab-search').classList.add('active');
-        } else if (tabName === 'login') {
-            document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            document.getElementById('tab-login').classList.add('active');
-        } else if (tabName === 'dashboard') {
-            document.getElementById('mainTabs').style.display = 'none';
-            document.getElementById('step-dashboard').classList.add('active');
-        }
+      if (tabName === 'search') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-search').classList.add('active');
+      } else if (tabName === 'login') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab-login').classList.add('active');
+      } else if (tabName === 'dashboard') {
+        document.getElementById('mainTabs').style.display = 'none';
+        document.getElementById('step-dashboard').classList.add('active');
+      }
     }
 
     // التنفيذ الفوري للبحث عن العمال
     function performSearch() {
-        const country = document.getElementById('searchCountry').value;
-        const city = document.getElementById('searchCity').value;
-        const district = document.getElementById('searchDistrict').value.trim();
-        let job = document.getElementById('searchJob').value;
-        if (job === 'أخرى') {
-            job = document.getElementById('searchOtherJobText').value.trim();
-        }
+      const country = document.getElementById('searchCountry').value;
+      const city = document.getElementById('searchCity').value;
+      const district = document.getElementById('searchDistrict').value.trim();
+      let job = document.getElementById('searchJob').value;
+      if (job === 'أخرى') {
+        job = document.getElementById('searchOtherJobText').value.trim();
+      }
 
-        const resultsDiv = document.getElementById('searchResults');
-        resultsDiv.innerHTML = '';
+      const resultsDiv = document.getElementById('searchResults');
+      resultsDiv.innerHTML = '';
 
-        if (!country) {
-            alert('يرجى اختيار الدولة على الأقل للبحث.');
-            return;
-        }
+      if (!country) {
+        alert('يرجى اختيار الدولة على الأقل للبحث.');
+        return;
+      }
 
-        let allWorkers = [...dummyWorkers];
-        const savedUser = localStorage.getItem('mahantiDirectUser');
-        if (savedUser) {
-            const user = JSON.parse(savedUser);
-            allWorkers.unshift({
-                name: "مهني مسجل حديثاً",
-                job: user.job,
-                country: user.country,
-                city: user.city,
-                district: user.district || 'غير محدد',
-                phone: user.phone,
-                experience: user.experience || 'غير محددة'
-            });
-        }
-
-        const filtered = allWorkers.filter(w => {
-            const matchCountry = w.country === country;
-            const matchCity = !city || w.city === city;
-            const matchDistrict = !district || (w.district && w.district.toLowerCase().includes(district.toLowerCase()));
-            const matchJob = !job || w.job.toLowerCase().includes(job.toLowerCase());
-            return matchCountry && matchCity && matchDistrict && matchJob;
+      let allWorkers = [...dummyWorkers];
+      const savedUser = localStorage.getItem('mahantiDirectUser');
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        allWorkers.unshift({
+          name: "مهني مسجل حديثاً",
+          job: user.job,
+          country: user.country,
+          city: user.city,
+          district: user.district || 'غير محدد',
+          phone: user.phone,
+          experience: user.experience || 'غير محددة'
         });
+      }
 
-        if (filtered.length === 0) {
-            resultsDiv.innerHTML = '<p style="color: #ffeb3b; font-weight: bold; margin-top: 15px;">عفواً، لا يوجد عمال متاحون حالياً بهذا البحث.</p>';
-            return;
-        }
+      const filtered = allWorkers.filter(w => {
+        const matchCountry = w.country === country;
+        const matchCity = !city || w.city === city;
+        const matchDistrict = !district || (w.district && w.district.toLowerCase().includes(district.toLowerCase()));
+        const matchJob = !job || w.job.toLowerCase().includes(job.toLowerCase());
+        return matchCountry && matchCity && matchDistrict && matchJob;
+      });
 
-        filtered.forEach(w => {
-            const card = document.createElement('div');
-            card.className = 'worker-card';
-            card.innerHTML = `
-                <strong>🛠️ المهنة:</strong> ${w.job}<br>
-                <strong>👤 الاسم:</strong> ${w.name}<br>
-                <strong>📍 الموقع:</strong> ${w.country} - ${w.city} (${w.district || 'عام'})<br>
-                <strong>⭐ الخبرة:</strong> ${w.experience ? w.experience + ' سنوات' : 'غير محددة'}<br>
-                <strong>📱 الهاتف:</strong> ${w.phone}
-                <div class="action-btns">
-                    <a href="tel:${w.phone}" class="btn-call">📞 اتصال مباشر</a>
-                    <a href="https://wa.me/${w.phone}" target="_blank" class="btn-whatsapp">💬 واتساب</a>
-                </div>
-            `;
-            resultsDiv.appendChild(card);
-        });
+      if (filtered.length === 0) {
+        resultsDiv.innerHTML = '<p style="color: #ffeb3b; font-weight: bold;">لا يوجد عمال متاحون بهذه المواصفات حالياً.</p>';
+        return;
+      }
+
+      filtered.forEach(worker => {
+        const card = document.createElement('div');
+        card.className = 'worker-card';
+        card.innerHTML = `
+          <div><strong>👤 المهني:</strong> ${worker.name}</div>
+          <div><strong>🛠️ المهنة:</strong> ${worker.job}</div>
+          <div><strong>📍 المكان:</strong> ${worker.country} - ${worker.city} ${worker.district ? '(' + worker.district + ')' : ''}</div>
+          <div><strong>⭐ الخبرة:</strong> ${worker.experience} سنوات</div>
+          <div><strong>📱 رقم الهاتف:</strong> ${worker.phone}</div>
+          <div class="action-btns">
+            <a href="tel:${worker.phone}" class="btn-call">📞 اتصال مباشر</a>
+            <a href="https://wa.me/${worker.phone.replace(/[^0-9]/g, '')}" target="_blank" class="btn-whatsapp">💬 واتساب</a>
+          </div>
+        `;
+        resultsDiv.appendChild(card);
+      });
     }
 
-    // تسجيل الدخول المباشر والانتقال الفوري للوحة التحكم
+    // التسجيل والدخول المباشر للمهني
     function directLogin() {
-        let job = document.getElementById('jobSelect').value;
-        if (job === 'أخرى') {
-            job = document.getElementById('loginOtherJobText').value.trim();
-        }
+      let job = document.getElementById('jobSelect').value;
+      if (job === 'أخرى') {
+        job = document.getElementById('loginOtherJobText').value.trim();
+      }
+      const country = document.getElementById('countrySelect').value;
+      const city = document.getElementById('citySelect').value;
+      const district = document.getElementById('craftsmanDistrict').value.trim();
+      const phone = document.getElementById('craftsmanPhone').value.trim();
+      const experience = document.getElementById('craftsmanExperience').value.trim();
 
-        const country = document.getElementById('countrySelect').value;
-        const city = document.getElementById('citySelect').value;
-        const district = document.getElementById('craftsmanDistrict').value.trim();
-        const phone = document.getElementById('craftsmanPhone').value.trim();
-        const experience = document.getElementById('craftsmanExperience').value.trim();
+      if (!job || !country || !city || !phone) {
+        alert('يرجى ملء جميع الحقول الأساسية (المهنة، الدولة، المدينة، ورقم الهاتف).');
+        return;
+      }
 
-        if (!job || !country || !city || !phone) {
-            alert('يرجى ملء كافة الحقول الأساسية لإنهاء التسجيل.');
-            return;
-        }
+      const userData = { job, country, city, district, phone, experience };
+      localStorage.setItem('mahantiDirectUser', JSON.stringify(userData));
 
-        const userData = { job: job, country: country, city: city, district: district, phone: phone, experience: experience };
-        localStorage.setItem('mahantiDirectUser', JSON.stringify(userData));
-        
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-  // إعدادات مشروع Firebase الخاص بك (mahanti-e5bfd)
-  const firebaseConfig = {
-    apiKey: "ضع_API_KEY_الخاص_بمشروعك",
-    authDomain: "mahanti-e5bfd.firebaseapp.com",
-    projectId: "mahanti-e5bfd",
-    storageBucket: "mahanti-e5bfd.appspot.com",
-    messagingSenderId: "ضع_SENDER_ID",
-    appId: "ضع_APP_ID"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  auth.languageCode = 'ar';
-
-  let confirmationResultObject = null;
-
-  // إعداد reCAPTCHA
-  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    'size': 'invisible'
-  });
-
-  // زر إرسال الرمز
-  document.getElementById('sendCodeBtn').addEventListener('click', () => {
-    const phone = document.getElementById('craftsmanPhone').value.trim();
-    const status = document.getElementById('authStatus');
-
-    if (!phone) {
-      alert('يرجى إدخال رقم الهاتف مع رمز الدولة أولاً (مثال: +9627XXXXXXXX)');
-      return;
+      alert('تم حفظ حسابك بنجاح وسيكون متاحاً لجميع الباحثين!');
+      displayDashboard(userData);
     }
 
-    status.innerText = "جاري إرسال كود التحقق...";
-    
-    signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
-      .then((confirmationResult) => {
-        confirmationResultObject = confirmationResult;
-        status.innerText = "تم إرسال كود التحقق إلى هاتفك بنجاح!";
-        document.getElementById('verificationSection').style.display = 'block';
-      })
-      .catch((error) => {
-        console.error(error);
-        status.innerText = "فشل الإرسال: " + error.message;
-      });
-  });
-
-  // زر تأكيد الرمز
-  document.getElementById('verifyCodeBtn').addEventListener('click', () => {
-    const code = document.getElementById('verificationCode').value.trim();
-    const status = document.getElementById('authStatus');
-
-    if (!code || !confirmationResultObject) {
-      alert('يرجى إدخال كود التحقق الصحيح.');
-      return;
-    }
-
-    confirmationResultObject.confirm(code)
-      .then((result) => {
-        status.style.color = '#81c784';
-        status.innerText = "تم تأكيد الهاتف بنجاح! يمكنك الآن الضغط على زر الدخول.";
-        // يمكنك هنا تمكين زر التكرار أو حفظ الحساب تلقائياً
-      })
-      .catch((error) => {
-        status.style.color = '#ef5350';
-        status.innerText = "كود التحقق غير صحيح.";
-      });
-  });
-</script>
-        alert('تم الحفظ والتسجيل بنجاح! جاري تحويلك للوحة التحكم...');
-        displayDashboard(userData);
-    }
-
-    function displayDashboard(userData) {
-        switchTab('dashboard');
-        document.getElementById('dashPhone').innerText = userData.phone;
-        document.getElementById('dashJob').innerText = userData.job;
-        document.getElementById('dashLocation').innerText = `${userData.country} - ${userData.city} (${userData.district || 'عام'})`;
-        document.getElementById('dashExperience').innerText = userData.experience ? `${userData.experience} سنوات` : 'غير محددة';
+    function displayDashboard(user) {
+      document.getElementById('dashPhone').textContent = user.phone;
+      document.getElementById('dashJob').textContent = user.job;
+      document.getElementById('dashLocation').textContent = `${user.country} - ${user.city} (${user.district || 'غير محدد'})`;
+      document.getElementById('dashExperience').textContent = user.experience ? `${user.experience} سنوات` : 'غير محددة';
+      
+      switchTab('dashboard');
     }
 
     function logout() {
-        localStorage.removeItem('mahantiDirectUser');
-        switchTab('search');
+      localStorage.removeItem('mahantiDirectUser');
+      alert('تم تسجيل الخروج وإزالة حسابك المؤقت.');
+      switchTab('login');
     }
-</script>
-
+  </script>
 </body>
 </html>
