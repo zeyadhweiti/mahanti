@@ -8,7 +8,7 @@
     * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #2e7d32; /* لون حشيشي رئيسي للخلفية */
+      background-color: #2e7d32;
       margin: 0;
       padding: 20px;
       display: flex;
@@ -17,16 +17,16 @@
       min-height: 100vh;
     }
     .container {
-      background: #1b5e20; /* أخضر حشيشي داكن للبطاقة الرئيسية */
+      background: #1b5e20;
       padding: 25px;
       border-radius: 14px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.3);
       max-width: 500px;
       width: 100%;
       text-align: center;
-      border: 2px solid #fbc02d; /* إطار أصفر */
+      border: 2px solid #fbc02d;
     }
-    h2 { color: #ffeb3b; margin-bottom: 10px; } /* عناوين باللون الأصفر */
+    h2 { color: #ffeb3b; margin-bottom: 10px; }
     p.subtitle { color: #e0f2f1; font-size: 14px; margin-bottom: 20px; }
     .tabs {
       display: flex;
@@ -45,12 +45,12 @@
       transition: 0.3s;
     }
     .tab-btn.active {
-      color: #ffeb3b; /* أصفر عند التحديد */
+      color: #ffeb3b;
       border-bottom: 4px solid #ffeb3b;
     }
     .btn {
-      background-color: #0d47a1; /* أزرق ملكي للأزرار الرئيسية */
-      color: #ffeb3b; /* نص أصفر */
+      background-color: #0d47a1;
+      color: #ffeb3b;
       border: 1px solid #fbc02d;
       padding: 13px 20px;
       border-radius: 8px;
@@ -70,7 +70,7 @@
       border-radius: 6px;
       font-size: 14px;
       background-color: #ffffff;
-      color: #0d47a1; /* نص أزرق للمدخلات */
+      color: #0d47a1;
       font-weight: 600;
     }
     label {
@@ -78,14 +78,13 @@
       text-align: right;
       font-weight: bold;
       font-size: 14px;
-      color: #ffeb3b; /* عناوين الحقول بالأصفر */
+      color: #ffeb3b;
     }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     
-    /* بطاقات العمال المتوفرين */
     .worker-card {
-      background: #0d47a1; /* خلفية كروت النتائج باللون الأزرق */
+      background: #0d47a1;
       border: 1px solid #fbc02d;
       border-radius: 8px;
       padding: 14px;
@@ -93,7 +92,7 @@
       text-align: right;
       color: #ffffff;
     }
-    .worker-card strong { color: #ffeb3b; } /* النص البارز بالأصفر */
+    .worker-card strong { color: #ffeb3b; }
     .action-btns {
       display: flex;
       gap: 8px;
@@ -123,7 +122,6 @@
       font-weight: bold;
       border: 1px solid #81c784;
     }
-    /* كارت لوحة التحكم الخضراء للأدمن/المهني */
     .feature-card {
       background: #0d47a1;
       border: 1px solid #fbc02d;
@@ -146,13 +144,11 @@
 <body>
 
   <div class="container" id="mainContainer">
-    <!-- التبويبات العلويّة -->
     <div class="tabs" id="mainTabs">
       <button class="tab-btn active" onclick="switchTab('search')">🔍 البحث عن عمال</button>
       <button class="tab-btn" onclick="switchTab('login')">🛠️ دخول المهنيين</button>
     </div>
 
-    <!-- التبويب 1: صفحة البحث عن العمال -->
     <div id="tab-search" class="tab-content active">
       <h2>🔍 ابحث عن حرفي أو عامل</h2>
       <p class="subtitle">اختر الدولة والمدينة والحي والمهنة للوصول المباشر للعمال</p>
@@ -206,7 +202,6 @@
       <div id="searchResults" style="margin-top: 15px;"></div>
     </div>
 
-    <!-- التبويب 2: تسجيل دخول وتأكيد حساب المهنيين -->
     <div id="tab-login" class="tab-content">
       <h2>🛠️ تسجيل دخول مهني</h2>
       <p class="subtitle">أدخل بياناتك لتظهر في نتائج البحث فوراً للعملاء</p>
@@ -264,7 +259,6 @@
       <button class="btn" onclick="directLogin()">🚀 حفظ الحساب والدخول للوحة التحكم</button>
     </div>
 
-    <!-- الواجهة 3: لوحة التحكم المباشرة للمهني بعد التسجيل -->
     <div id="step-dashboard" class="tab-content">
       <h2>🛠️ لوحة تحكم المهني</h2>
       <div style="margin-bottom: 12px;">
