@@ -114,7 +114,25 @@
             font-size: 13px;
             font-weight: bold;
             border: 1px solid #fbc02d;
-        }
+        }<label>رقم هاتف المهني:</label>
+<input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
+        <!-- زر إرسال كود التحقق من فايبربيس -->
+<button class="btn" type="button" id="sendCodeBtn" style="background-color: #2e7d32; margin-top: 5px;">📲 إرسال كود التحقق لفيسبوك/فايبربيس</button>
+
+<!-- حاوية أمان Firebase reCAPTCHA -->
+<div id="recaptcha-container"></div>
+
+<!-- حقل إدخال الكود المكون من 6 أرقام (يظهر بعد الإرسال) -->
+<div id="verificationSection" style="display: none; margin-top: 10px;">
+  <label>أدخل كود التحقق المرسل لهاتفك:</label>
+  <input type="text" id="verificationCode" placeholder="123456">
+  <button class="btn" type="button" id="verifyCodeBtn" style="background-color: #fbc02d; color: #000;">✅ تأكيد الكود</button>
+</div>
+
+<!-- رسالة توضيح حالة الإرسال -->
+<p id="authStatus" style="color: #ffeb3b; font-size: 13px; margin-top: 8px;"></p>
+
+        
         .btn-whatsapp {
             background-color: #2e7d32;
             color: #ffffff;
