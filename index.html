@@ -211,6 +211,10 @@
       <h2>🛠️ تسجيل دخول مهني</h2>
       <p class="subtitle">أدخل بياناتك لتظهر في نتائج البحث فوراً للعملاء</p>
 
+      <!-- حقل اسم المهني -->
+      <label>اسم المهني / الحرفي:</label>
+      <input type="text" id="craftsmanName" placeholder="أدخل اسمك الكامل">
+
       <label>اختر المهنة / التخصص:</label>
       <select id="jobSelect" onchange="toggleOtherJobInput('jobSelect', 'loginOtherJobContainer')">
         <option value="">-- اختر المهنة --</option>
@@ -255,24 +259,19 @@
       <label>اسم الحي / المنطقة:</label>
       <input type="text" id="craftsmanDistrict" placeholder="مثال: الشميساني، حي الزهراء...">
 
-      <label>رقم هاتف المهني (شاملاً رمز الدولة):</label>
-      <input type="tel" id="craftsmanPhone" placeholder="مثال: 9627XXXXXXXX+">
+      <label>رقم هاتف المهني:</label>
+      <input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
 
-      <!-- زر إرسال كود التحقق SMS من Firebase -->
-      <button class="btn" type="button" id="sendSmsBtn" style="background-color: #1565c0; margin-top: 0; margin-bottom: 12px;">📲 إرسال كود التحقق (SMS)</button>
-
-      <!-- حاوية أمان Firebase reCAPTCHA المخفية -->
-      <div id="recaptcha-container"></div>
-
-      <!-- قسم إدخال كود التحقق (يظهر بعد إرسال الرسالة) -->
-      <div id="smsCodeSection" style="display: none; margin-bottom: 15px;">
-        <label>أدخل رمز التحقق المرسل إلى هاتفك:</label>
-        <input type="text" id="smsCodeInput" placeholder="أدخل الرمز هنا">
-        <button class="btn" type="button" id="verifySmsBtn" style="background-color: #2e7d32; margin-top: 5px;">✅ تأكيد الرمز</button>
+      <!-- قسم إرسال وتأكيد رمز التلفون (4 أرقام) -->
+      <button class="btn" type="button" id="sendCodeBtn" onclick="sendVerificationCode()" style="background-color: #1565c0; margin-top: 0; margin-bottom: 8px;">📲 إرسال كود التحقق للهاتف</button>
+      
+      <div id="verifyBox" style="display: none; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 12px;">
+        <label>أدخل كود التحقق المكون من 4 أرقام:</label>
+        <input type="text" id="phoneCodeInput" maxlength="4" placeholder="مثال: 4821">
+        <button class="btn" type="button" onclick="confirmPhoneCode()" style="background-color: #2e7d32; margin-top: 5px;">✅ تأكيد الكود</button>
       </div>
 
-      <!-- رسالة توضيحية لحالة التحقق -->
-      <p id="smsStatus" style="font-size: 13px; font-weight: bold; margin-bottom: 10px;"></p>
+      <p id="phoneVerifyStatus" style="font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #ffeb3b;"></p>
 
       <label>سنوات الخبرة:</label>
       <input type="number" id="craftsmanExperience" placeholder="مثال: 5">
@@ -288,6 +287,7 @@
       </div>
 
       <div class="feature-card">
+        <strong>👤 الاسم:</strong> <span id="dashName"></span><br>
         <strong>📱 رقم الهاتف:</strong> <span id="dashPhone"></span><br>
         <strong>🛠️ المهنة:</strong> <span id="dashJob"></span><br>
         <strong>📍 الموقع والحي:</strong> <span id="dashLocation"></span><br>
@@ -339,6 +339,9 @@
       { name: "محمد حسن", job: "كهربائي", country: "مصر", city: "القاهرة", district: "مدينة نصر", phone: "01012345678", experience: "10" }
     ];
 
+    let generatedCode = null;
+    let isPhoneVerified = false;
+
     window.onload = function() {
       populateCountries('searchCountry');
       populateCountries('countrySelect');
@@ -382,6 +385,42 @@
       container.style.display = (selectVal === 'أخرى') ? 'block' : 'none';
     }
 
+    // توليد كود التحقق المكون من 4 أرقام
+    function sendVerificationCode() {
+      const phone = document.getElementById('craftsmanPhone').value.trim();
+      const statusP = document.getElementById('phoneVerifyStatus');
+
+      if (!phone || phone.length < 8) {
+        alert('يرجى أدخل رقم هاتف صحيح أولاً.');
+        return;
+      }
+
+      // توليد كود عشوائي من 4 أرقام
+      generatedCode = Math.floor(1000 + Math.random() * 9000).toString();
+      
+      // إظهار الكود في تنبيه وتفعيل خانة التحقق
+      document.getElementById('verifyBox').style.display = 'block';
+      statusP.style.color = '#ffeb3b';
+      statusP.innerText = 'تم توليد كود التحقق الخاص بك بنجاح!';
+      
+      alert(`كود التحقق الخاص بك هو: [ ${generatedCode} ]\nأدخله في الخانة المخصصة للتأكيد.`);
+    }
+
+    // تأكيد كود الرقم
+    function confirmPhoneCode() {
+      const enteredCode = document.getElementById('phoneCodeInput').value.trim();
+      const statusP = document.getElementById('phoneVerifyStatus');
+
+      if (enteredCode === generatedCode && generatedCode !== null) {
+        isPhoneVerified = true;
+        statusP.style.color = '#81c784';
+        statusP.innerText = '✅ تم تأكيد رقم الهاتف بنجاح!';
+        document.getElementById('verifyBox').style.display = 'none';
+      } else {
+        alert('كود التحقق غير صحيح، حاول مرة أخرى.');
+      }
+    }
+
     function switchTab(tabName) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -421,7 +460,7 @@
       if (savedUser) {
         const user = JSON.parse(savedUser);
         allWorkers.unshift({
-          name: "مهني مسجل حديثاً",
+          name: user.name || "مهني مسجل حديثاً",
           job: user.job,
           country: user.country,
           city: user.city,
@@ -463,6 +502,7 @@
     }
 
     function directLogin() {
+      const name = document.getElementById('craftsmanName').value.trim();
       let job = document.getElementById('jobSelect').value;
       if (job === 'أخرى') {
         job = document.getElementById('loginOtherJobText').value.trim();
@@ -473,17 +513,17 @@
       const phone = document.getElementById('craftsmanPhone').value.trim();
       const experience = document.getElementById('craftsmanExperience').value.trim();
 
-      if (!job || !country || !city || !phone) {
-        alert('يرجى ملء جميع الحقول الأساسية (المهنة، الدولة، المدينة، ورقم الهاتف).');
+      if (!name || !job || !country || !city || !phone) {
+        alert('يرجى ملء جميع الحقول الأساسية (الاسم، المهنة، الدولة، المدينة، ورقم الهاتف).');
         return;
       }
 
-      if (!window.isPhoneVerified) {
-        alert('يرجى تأكيد رقم الهاتف عبر إرسال وتأكيد كود SMS أولاً.');
+      if (!isPhoneVerified) {
+        alert('يرجى الضغط على زر "إرسال كود التحقق" وتأكيد الكود المكون من 4 أرقام أولاً.');
         return;
       }
 
-      const userData = { job, country, city, district, phone, experience };
+      const userData = { name, job, country, city, district, phone, experience };
       localStorage.setItem('mahantiDirectUser', JSON.stringify(userData));
 
       alert('تم حفظ حسابك بنجاح وسيكون متاحاً لجميع الباحثين!');
@@ -491,6 +531,7 @@
     }
 
     function displayDashboard(user) {
+      document.getElementById('dashName').textContent = user.name || 'غير محدد';
       document.getElementById('dashPhone').textContent = user.phone;
       document.getElementById('dashJob').textContent = user.job;
       document.getElementById('dashLocation').textContent = `${user.country} - ${user.city} (${user.district || 'غير محدد'})`;
@@ -501,85 +542,11 @@
 
     function logout() {
       localStorage.removeItem('mahantiDirectUser');
-      alert('تم تسجيل الخروج وإزالة حسابك المؤقت.');
+      isPhoneVerified = false;
+      generatedCode = null;
+      alert('تم تسجيل الخروج وإزالة حسابك.');
       switchTab('login');
     }
-  </script>
-
-  <!-- كود برمجيات Firebase لتفعيل التحقق برقم الهاتف عبر SMS -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-YOUR_ACTUAL_API_KEY", // استبدل بـ API Key من إعدادات مشروعك
-      authDomain: "mahanti-e5bfd.firebaseapp.com",
-      projectId: "mahanti-e5bfd",
-      storageBucket: "mahanti-e5bfd.appspot.com",
-      messagingSenderId: "101234567890",
-      appId: "1:101234567890:web:abcdef123456"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    auth.languageCode = 'ar';
-
-    window.isPhoneVerified = false;
-    let confirmationResultObj = null;
-
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      'size': 'invisible'
-    });
-
-    // زر إرسال كود الـ SMS
-    document.getElementById('sendSmsBtn').addEventListener('click', () => {
-      const phoneInput = document.getElementById('craftsmanPhone').value.trim();
-      const statusP = document.getElementById('smsStatus');
-
-      if (!phoneInput) {
-        alert('يرجى أدخل رقم الهاتف مع رمز الدولة أولاً (مثلاً: 962791234567+)');
-        return;
-      }
-
-      statusP.style.color = '#ffeb3b';
-      statusP.innerText = 'جاري إرسال كود التحقق إلى هاتفك...';
-
-      signInWithPhoneNumber(auth, phoneInput, window.recaptchaVerifier)
-        .then((confirmationResult) => {
-          confirmationResultObj = confirmationResult;
-          statusP.style.color = '#81c784';
-          statusP.innerText = 'تم إرسال كود SMS بنجاح! أدخل الكود أدناه.';
-          document.getElementById('smsCodeSection').style.display = 'block';
-        })
-        .catch((error) => {
-          console.error(error);
-          statusP.style.color = '#ef5350';
-          statusP.innerText = 'فشل الإرسال: ' + error.message;
-        });
-    });
-
-    // زر التأكيد
-    document.getElementById('verifySmsBtn').addEventListener('click', () => {
-      const codeInput = document.getElementById('smsCodeInput').value.trim();
-      const statusP = document.getElementById('smsStatus');
-
-      if (!codeInput || !confirmationResultObj) {
-        alert('يرجى إدخال الرمز المكون من 6 أرقام.');
-        return;
-      }
-
-      confirmationResultObj.confirm(codeInput)
-        .then((result) => {
-          window.isPhoneVerified = true;
-          statusP.style.color = '#81c784';
-          statusP.innerText = '✅ تم تأكيد الرقم بنجاح! يمكنك الآن الحفظ والحصول على لوحة التحكم.';
-          document.getElementById('smsCodeSection').style.display = 'none';
-        })
-        .catch((error) => {
-          statusP.style.color = '#ef5350';
-          statusP.innerText = 'رمز التحقق غير صحيح، حاول مرة أخرى.';
-        });
-    });
   </script>
 </body>
 </html>
