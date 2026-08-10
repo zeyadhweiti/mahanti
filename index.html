@@ -221,7 +221,8 @@
         <option value="فني تكييف">فني تكييف وتبريد</option>
         <option value="عامل بناء">عامل بناء / بنّاء</option>
         <option value="مبلط">مبلط / سيراميك</option>
-        <option value="حداد">حداد</option> <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
+        <option value="حداد">حداد</option>
+        <option value="ألومنيوم">فني ألومنيوم / زجاج</option>
         <option value="جبس بورد">فني ديكور / جبس بورد</option>
         <option value="مصلح أجهزة">مصلح أدوات منزلية وأجهزة</option>
         <option value="ميكانيكي">ميكانيكي سيارات</option>
@@ -257,7 +258,6 @@
       <label>رقم هاتف المهني:</label>
       <input type="tel" id="craftsmanPhone" placeholder="أدخل رقم هاتفك">
 
-      <!-- حقل الخبرة بالسـنوات -->
       <label>سنوات الخبرة:</label>
       <input type="number" id="craftsmanExperience" placeholder="مثال: 5">
 
@@ -292,7 +292,6 @@
   </div>
 
   <script>
-    // قائمة الدول والمدن الموسعة بالكامل
     const arabCountries = {
       "الأردن": ["عمان", "الزرقاء", "إربد", "العقبة", "البلقاء", "المفرق", "جرش", "عجلون", "مأدبا", "الكرك", "الطفيلة", "معان"],
       "السعودية": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر", "أبها", "تبوك", "حائل", "القصيم", "الطائف", "النجران", "جيزان", "الأحساء"],
@@ -318,7 +317,6 @@
       "جزر القمر": ["موروني"]
     };
 
-    // بيانات عمال افتراضية تتضمن الخبرة
     const dummyWorkers = [
       { name: "أحمد العلي", job: "سباك", country: "الأردن", city: "العقبة", district: "الحي التجاري", phone: "0777411458", experience: "7" },
       { name: "خالد منصور", job: "نجار", country: "السعودية", city: "الرياض", district: "حي العليا", phone: "0501234567", experience: "5" },
@@ -368,7 +366,6 @@
       container.style.display = (selectVal === 'أخرى') ? 'block' : 'none';
     }
 
-    // التنقل بين التبويبات
     function switchTab(tabName) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -386,7 +383,6 @@
       }
     }
 
-    // التنفيذ الفوري للبحث عن العمال
     function performSearch() {
       const country = document.getElementById('searchCountry').value;
       const city = document.getElementById('searchCity').value;
@@ -450,7 +446,6 @@
       });
     }
 
-    // التسجيل والدخول المباشر للمهني
     function directLogin() {
       let job = document.getElementById('jobSelect').value;
       if (job === 'أخرى') {
