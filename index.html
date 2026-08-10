@@ -499,6 +499,77 @@
         const userData = { job: job, country: country, city: city, district: district, phone: phone, experience: experience };
         localStorage.setItem('mahantiDirectUser', JSON.stringify(userData));
         
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  // إعدادات مشروع Firebase الخاص بك (mahanti-e5bfd)
+  const firebaseConfig = {
+    apiKey: "ضع_API_KEY_الخاص_بمشروعك",
+    authDomain: "mahanti-e5bfd.firebaseapp.com",
+    projectId: "mahanti-e5bfd",
+    storageBucket: "mahanti-e5bfd.appspot.com",
+    messagingSenderId: "ضع_SENDER_ID",
+    appId: "ضع_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  auth.languageCode = 'ar';
+
+  let confirmationResultObject = null;
+
+  // إعداد reCAPTCHA
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    'size': 'invisible'
+  });
+
+  // زر إرسال الرمز
+  document.getElementById('sendCodeBtn').addEventListener('click', () => {
+    const phone = document.getElementById('craftsmanPhone').value.trim();
+    const status = document.getElementById('authStatus');
+
+    if (!phone) {
+      alert('يرجى إدخال رقم الهاتف مع رمز الدولة أولاً (مثال: +9627XXXXXXXX)');
+      return;
+    }
+
+    status.innerText = "جاري إرسال كود التحقق...";
+    
+    signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
+      .then((confirmationResult) => {
+        confirmationResultObject = confirmationResult;
+        status.innerText = "تم إرسال كود التحقق إلى هاتفك بنجاح!";
+        document.getElementById('verificationSection').style.display = 'block';
+      })
+      .catch((error) => {
+        console.error(error);
+        status.innerText = "فشل الإرسال: " + error.message;
+      });
+  });
+
+  // زر تأكيد الرمز
+  document.getElementById('verifyCodeBtn').addEventListener('click', () => {
+    const code = document.getElementById('verificationCode').value.trim();
+    const status = document.getElementById('authStatus');
+
+    if (!code || !confirmationResultObject) {
+      alert('يرجى إدخال كود التحقق الصحيح.');
+      return;
+    }
+
+    confirmationResultObject.confirm(code)
+      .then((result) => {
+        status.style.color = '#81c784';
+        status.innerText = "تم تأكيد الهاتف بنجاح! يمكنك الآن الضغط على زر الدخول.";
+        // يمكنك هنا تمكين زر التكرار أو حفظ الحساب تلقائياً
+      })
+      .catch((error) => {
+        status.style.color = '#ef5350';
+        status.innerText = "كود التحقق غير صحيح.";
+      });
+  });
+</script>
         alert('تم الحفظ والتسجيل بنجاح! جاري تحويلك للوحة التحكم...');
         displayDashboard(userData);
     }
